@@ -59,13 +59,13 @@ const HappBarLayout = () => {
           <Ionicons name='chevron-up-circle' size={25} color='#62A87C' />
           <View style={styles.income}>
             <StyledText type='label' variant='light'>Income</StyledText>
-            <StyledText type='text' variant='light'>$12,572.00</StyledText>
+            <StyledText type='text' variant='light' weight='medium'>$12,572.00</StyledText>
           </View>
         </View>
         <View style={styles.dataContainer}>
           <View style={styles.expenses}>
             <StyledText type='label' variant='light'>Expenses</StyledText>
-            <StyledText type='text' variant='light'>$4,252.00</StyledText>
+            <StyledText type='text' variant='light' weight='medium'>$4,252.00</StyledText>
           </View>
           <Ionicons name='chevron-down-circle' size={25} color='#FE616F' />
         </View>

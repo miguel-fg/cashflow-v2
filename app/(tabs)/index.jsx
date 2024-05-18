@@ -7,6 +7,7 @@ import { StatusBar } from 'expo-status-bar'
 import HomeAppBar from '../../components/home/HomeAppBar'
 import StyledText from '../../components/shared/styledText'
 import HappBarLayout from '../../components/home/HappBarLayout'
+import Transactions from '../../components/home/Transactions'
 
 const Index = () => {
 
@@ -19,14 +20,15 @@ const Index = () => {
             <HappBarLayout />
           </View>
         </HomeAppBar>
-        <ScrollView
+        <View
           style={styles.container}
           contentContainerStyle={styles.container}
         >
           <View style={styles.transactionsContainer}>
             <StyledText type='title'>Transactions</StyledText>
           </View>
-        </ScrollView>
+          <Transactions />
+        </View>
       </SafeAreaView>
     </>
   )
@@ -43,6 +45,7 @@ const styles = StyleSheet.create({
   transactionsContainer: {
     alignItems: 'center',
     marginTop: 20,
+    marginBottom: 15,
   }
 })
 

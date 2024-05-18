@@ -26,81 +26,60 @@ const StyledText = (props) => {
     SplashScreen.hideAsync()
   }
 
-  const baseStyle = getBaseStyle(props.type, props.variant)
+  let style
 
-  const customStyle = {
-    color: props.color || baseStyle.color,
-    fontFamily: getFontFamily(props.weight),
-    fontSize: baseStyle.fontSize
+  if (props.type === 'label') {
+    style = props.variant === 'light' ? styles.lightLabel : styles.darkLabel
+  } else if (props.type === 'text') {
+    style = props.variant === 'light' ? styles.lightText : styles.darkText
+  } else if (props.type === 'title') {
+    style = props.variant === 'light' ? styles.lightTitle : styles.darkTitle
+  } else if (props.type === 'header') {
+    style = props.variant === 'light' ? styles.lightHeader : styles.darkHeader
   }
 
   return (
-    <Text style={customStyle}>{props.children}</Text>
+    <Text style={style}>{props.children}</Text>
   )
 }
 
-const getBaseStyle = (type, variant = 'dark') => {
-  const variantSuffix = variant === 'light' ? 'Light' : 'Dark'
-
-  switch (type) {
-    case 'label':
-      return styles[`label${variantSuffix}`]
-    case 'text':
-      return styles[`text${variantSuffix}`]
-    case 'title':
-      return styles[`title${variantSuffix}`]
-    case 'header':
-      return styles[`header${variantSuffix}`]
-  }
-}
-
-const getFontFamily = (weight) => {
-  switch (weight) {
-    case 'medium':
-      return 'SpaceGrotesk_500Medium'
-    case 'regular':
-    default:
-      return 'SpaceGrotesk_400Regular'
-  }
-}
-
 const styles = StyleSheet.create({
-  labelLight: {
+  lightLabel: {
     color: '#EEF0F2',
     fontSize: 12,
     fontFamily: 'SpaceGrotesk_400Regular'
   },
-  labelDark: {
+  darkLabel: {
     color: '#080E21',
     fontSize: 12,
     fontFamily: 'SpaceGrotesk_400Regular'
   },
-  textLight: {
+  lightText: {
     color: '#EEF0F2',
     fontSize: 16,
     fontFamily: 'SpaceGrotesk_400Regular'
   },
-  textDark: {
+  darkText: {
     color: '#080E21',
     fontSize: 16,
     fontFamily: 'SpaceGrotesk_400Regular'
   },
-  titleLight: {
+  lightTitle: {
     color: '#EEF0F2',
     fontSize: 20,
     fontFamily: 'SpaceGrotesk_400Regular'
   },
-  titleDark: {
+  darkTitle: {
     color: '#080E21',
     fontSize: 20,
     fontFamily: 'SpaceGrotesk_400Regular'
   },
-  headerLight: {
+  lightHeader: {
     color: '#EEF0F2',
     fontSize: 40,
     fontFamily: 'SpaceGrotesk_400Regular'
   },
-  headerDark: {
+  darkHeader: {
     color: '#080E21',
     fontSize: 40,
     fontFamily: 'SpaceGrotesk_400Regular'
