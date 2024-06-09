@@ -33,6 +33,7 @@ const StyledText = (props) => {
     fontFamily: getFontFamily(props.weight),
     fontSize: baseStyle.fontSize,
     textDecorationLine: props.decoration || "none",
+    textAlign: props.align || "auto",
   };
 
   return <Text style={customStyle}>{props.children}</Text>;
