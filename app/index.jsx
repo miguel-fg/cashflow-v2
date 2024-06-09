@@ -26,9 +26,11 @@ const Welcome = () => {
             LOGIN
           </TextButton>
         </Link>
-        <TextButton variant="secondary" style={styles.buttonSize}>
-          SIGN UP
-        </TextButton>
+        <Link href="/register" asChild>
+          <TextButton variant="secondary" style={styles.buttonSize}>
+            SIGN UP
+          </TextButton>
+        </Link>
       </SafeAreaView>
     </>
   );

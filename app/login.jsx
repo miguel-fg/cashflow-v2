@@ -2,7 +2,9 @@ import React from "react";
 import { SafeAreaView, View, StyleSheet, Image, StatusBar } from "react-native";
 import TextButton from "../components/shared/textButton";
 import StyledText from "../components/shared/styledText";
+import StyledTextInput from "../components/shared/styledTextInput";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Link } from "expo-router";
 
 const Login = () => {
   return (
@@ -20,10 +22,25 @@ const Login = () => {
           </StyledText>
           <StyledText type="text">Login to your account</StyledText>
         </View>
+        <View style={styles.textInputContainer}>
+          <StyledTextInput
+            icon="user"
+            placeholder="Username"
+            password={false}
+          />
+          <StyledTextInput icon="lock" placeholder="Password" password={true} />
+        </View>
         <TextButton variant="primary" style={styles.buttonSize}>
           LOGIN
         </TextButton>
-        <StyledText type="label">Don't have an account? Sign up</StyledText>
+        <StyledText type="label">
+          Don't have an account?{" "}
+          <Link href="/register">
+            <StyledText type="label" weight="medium" decoration="underline">
+              Sign up
+            </StyledText>
+          </Link>
+        </StyledText>
       </SafeAreaView>
     </>
   );
@@ -46,17 +63,21 @@ const styles = StyleSheet.create({
   mainImage: {
     width: 200,
     height: 229,
-    marginTop: 90,
+    marginTop: 50,
   },
   textContainer: {
     alignItems: "center",
     width: "100%",
     marginTop: 20,
-    marginBottom: 50,
+    marginBottom: 30,
   },
   buttonSize: {
     width: "80%",
     marginBottom: 5,
+  },
+  textInputContainer: {
+    width: "80%",
+    marginBottom: 60,
   },
 });
 
