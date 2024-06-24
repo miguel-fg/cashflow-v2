@@ -18,8 +18,7 @@ const getIconSource = (icon) => {
 };
 
 const StyledTextInput = (props) => {
-  const { icon, placeholder, password } = props;
-  const [text, setText] = useState("");
+  const { icon, placeholder, password, text, setText } = props;
 
   const [fontsLoaded] = useFonts({ SpaceGrotesk_400Regular });
 
@@ -59,7 +58,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderColor: "#416788",
     borderWidth: 1,
-    marginBottom: 10,
+    marginTop: 10,
     alignItems: "center",
     shadowColor: "#416788",
     shadowOffset: { width: -2, height: 2 },

@@ -36,7 +36,11 @@ const StyledText = (props) => {
     textAlign: props.align || "auto",
   };
 
-  return <Text style={customStyle}>{props.children}</Text>;
+  return (
+    <Text key={props.key} style={customStyle}>
+      {props.children}
+    </Text>
+  );
 };
 
 const getBaseStyle = (type, variant = "dark") => {

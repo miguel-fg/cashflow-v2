@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { SafeAreaView, StatusBar, View, StyleSheet } from "react-native";
 import StyledText from "../components/shared/styledText";
 import StyledTextInput from "../components/shared/styledTextInput";
@@ -7,6 +7,50 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Link } from "expo-router";
 
 const Register = () => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confPassword, setConfPassword] = useState("");
+  const [isFormValid, setIsFormValid] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    validateForm();
+  }, [name, email, password, confPassword]);
+
+  const validateForm = () => {
+    let errors = {};
+
+    if (!name) {
+      errors.name = "Username is required.";
+    }
+
+    if (!email) {
+      errors.email = "Email is required.";
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      errors.email = "Email is invalid";
+    }
+
+    if (!password) {
+      errors.password = "Password is required.";
+    } else if (password.length < 6) {
+      errors.password = "Password must be at least 6 characters.";
+    } else if (password != confPassword) {
+      errors.confPassword = "Passwords don't match";
+    }
+
+    setErrors(errors);
+    setIsFormValid(Object.keys(errors).length === 0);
+  };
+
+  const handleSubmit = () => {
+    if (isFormValid) {
+      console.log("Form submitted successfully!");
+    } else {
+      console.log("Form has errors. Please coffect them.");
+    }
+  };
+
   return (
     <>
       <StatusBar barStyle="dark-content" backgroundColor="#EEF0F2" />
@@ -23,20 +67,60 @@ const Register = () => {
             icon="user"
             placeholder="Username"
             password={false}
+            text={name}
+            setText={setName}
           />
-          <StyledTextInput icon="email" placeholder="Email" password={false} />
-          <StyledTextInput icon="lock" placeholder="Password" password={true} />
+          {errors.name && (
+            <StyledText type="text" color="#FE616F">
+              {errors.name}
+            </StyledText>
+          )}
+          <StyledTextInput
+            icon="email"
+            placeholder="Email"
+            password={false}
+            text={email}
+            setText={setEmail}
+          />
+          {errors.email && (
+            <StyledText type="text" color="#FE616F">
+              {errors.email}
+            </StyledText>
+          )}
+          <StyledTextInput
+            icon="lock"
+            placeholder="Password"
+            password={true}
+            text={password}
+            setText={setPassword}
+          />
+          {errors.password && (
+            <StyledText type="text" color="#FE616F">
+              {errors.password}
+            </StyledText>
+          )}
           <StyledTextInput
             icon="lock"
             placeholder="Confirm password"
             password={true}
+            text={confPassword}
+            setText={setConfPassword}
           />
+          {errors.confPassword && (
+            <StyledText type="text" color="#FE616F">
+              {errors.confPassword}
+            </StyledText>
+          )}
           <StyledText type="label" align="center">
             By registering you are agreeing to our Terms of use and Privacy
             Policy.
           </StyledText>
         </View>
-        <TextButton variant="primary" style={styles.buttonSize}>
+        <TextButton
+          variant="primary"
+          style={styles.buttonSize}
+          onPress={handleSubmit}
+        >
           REGISTER
         </TextButton>
         <StyledText type="label">
