@@ -6,6 +6,7 @@ const initDB = async () => {
   if (!db) {
     db = await SQLite.openDatabaseAsync("app.db");
   }
+
   return db;
 };
 
@@ -15,8 +16,8 @@ const createTables = async () => {
     await db.execAsync(`
       CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT NOT NULL,
-        email TEXT NOT NULL,
+        username TEXT NOT NULL UNIQUE,
+        email TEXT NOT NULL UNIQUE,
         password TEXT NOT NULL
       );
       CREATE TABLE IF NOT EXISTS accounts (
@@ -45,4 +46,14 @@ const createTables = async () => {
   }
 };
 
-export { initDB, createTables };
+const logTable = async (tableName) => {
+  try {
+    const db = await initDB();
+    const results = await db.execAsync(`SELECT * FROM ${tableName}`);
+    console.log(`Contents of ${tableName}:`, results);
+  } catch (error) {
+    console.error(`Failed to log contents of ${tableName}: `, error);
+  }
+};
+
+export { initDB, createTables, logTable };

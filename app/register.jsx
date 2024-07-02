@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { SafeAreaView, StatusBar, View, StyleSheet } from "react-native";
+import { SafeAreaView, StatusBar, View, StyleSheet, Alert } from "react-native";
 import StyledText from "../components/shared/styledText";
 import StyledTextInput from "../components/shared/styledTextInput";
 import TextButton from "../components/shared/textButton";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Link } from "expo-router";
+import { initDB, logTable } from "../db/database.js";
+import * as Crypto from "expo-crypto";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -43,11 +45,42 @@ const Register = () => {
     setIsFormValid(Object.keys(errors).length === 0);
   };
 
-  const handleSubmit = () => {
+  const hashPassword = async (password) => {
+    const digest = await Crypto.digestStringAsync(
+      Crypto.CryptoDigestAlgorithm.SHA256,
+      password,
+    );
+
+    return digest;
+  };
+
+  const handleSubmit = async () => {
     if (isFormValid) {
-      console.log("Form submitted successfully!");
+      try {
+        const db = await initDB();
+        const existingUser = await db.getFirstAsync(
+          "SELECT * FROM users WHERE username = ? OR email = ?",
+          [name, email],
+        );
+
+        if (existingUser) {
+          Alert.alert("Error", "Username or email already exists.");
+          return;
+        }
+
+        const hashedPassword = await hashPassword(password);
+
+        await db.runAsync(
+          "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
+          [name, email, hashedPassword],
+        );
+        Alert.alert("Success", "User registered successfully!");
+        //logTable("users");
+      } catch (error) {
+        Alert.alert("Error", "Failed to register user.");
+      }
     } else {
-      console.log("Form has errors. Please coffect them.");
+      console.log("Form has errors. Please correct them.");
     }
   };
 
