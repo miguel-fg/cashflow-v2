@@ -5,7 +5,7 @@ import StyledTextInput from "../components/shared/styledTextInput";
 import TextButton from "../components/shared/textButton";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Link } from "expo-router";
-import { initDB, logTable } from "../db/database.js";
+import { initDB, logUsers } from "../db/database.js";
 import * as Crypto from "expo-crypto";
 
 const Register = () => {
@@ -75,7 +75,7 @@ const Register = () => {
           [name, email, hashedPassword],
         );
         Alert.alert("Success", "User registered successfully!");
-        //logTable("users");
+        logUsers();
       } catch (error) {
         Alert.alert("Error", "Failed to register user.");
       }

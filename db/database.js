@@ -40,20 +40,22 @@ const createTables = async () => {
       );
     `);
 
-    console.log("Tables created successfully");
+    console.log("CF_SQLite Database Connected!");
   } catch (error) {
-    console.log("Error creating tables: ", error);
+    console.error("CF_SQLite Database Failed to Connect", error);
   }
 };
 
-const logTable = async (tableName) => {
+const logUsers = async () => {
   try {
     const db = await initDB();
-    const results = await db.execAsync(`SELECT * FROM ${tableName}`);
-    console.log(`Contents of ${tableName}:`, results);
+    const results = await db.getAllAsync(`SELECT * FROM users`);
+    for (const row of results) {
+      console.log(row.id, row.username, row.email, row.password);
+    }
   } catch (error) {
-    console.error(`Failed to log contents of ${tableName}: `, error);
+    console.error(`Failed to log contents of users`, error);
   }
 };
 
-export { initDB, createTables, logTable };
+export { initDB, createTables, logUsers };
