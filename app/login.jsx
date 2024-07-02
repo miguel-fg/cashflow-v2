@@ -1,12 +1,83 @@
-import React from "react";
-import { SafeAreaView, View, StyleSheet, Image, StatusBar } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  SafeAreaView,
+  View,
+  StyleSheet,
+  Image,
+  StatusBar,
+  Alert,
+} from "react-native";
 import TextButton from "../components/shared/textButton";
 import StyledText from "../components/shared/styledText";
 import StyledTextInput from "../components/shared/styledTextInput";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Link } from "expo-router";
+import { initDB } from "../db/database.js";
+import * as Crypto from "expo-crypto";
 
 const Login = () => {
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const [isFormValid, setIsFormValid] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    validateForm();
+  }, [name, password]);
+
+  const validateForm = () => {
+    let errors = {};
+
+    if (!name) {
+      errors.name = "Username is required.";
+    }
+
+    if (!password) {
+      errors.password = "Password is required";
+    }
+
+    setErrors(errors);
+    setIsFormValid(Object.keys(errors).length === 0);
+  };
+
+  const hashPassword = async (password) => {
+    const digest = await Crypto.digestStringAsync(
+      Crypto.CryptoDigestAlgorithm.SHA256,
+      password,
+    );
+
+    return digest;
+  };
+
+  const handleSubmit = async () => {
+    if (isFormValid) {
+      try {
+        const db = await initDB();
+        const user = await db.getFirstAsync(
+          "SELECT * FROM users WHERE username = ?",
+          [name],
+        );
+
+        if (!user) {
+          Alert.alert("Error", "User not found.");
+          return;
+        }
+
+        const hashedPassword = await hashPassword(password);
+
+        if (hashedPassword === user.password) {
+          Alert.alert("Sucess", "Login successful!");
+        } else {
+          Alert.alert("Error", "Incorrect password.");
+        }
+      } catch (error) {
+        Alert.alert("Error", "Failed to login");
+      }
+    } else {
+      console.log("Form has errors. Please correct them.");
+    }
+  };
+
   return (
     <>
       <StatusBar barStyle="dark-content" backgroundColor="#EEF0F2" />
@@ -27,10 +98,32 @@ const Login = () => {
             icon="user"
             placeholder="Username"
             password={false}
+            text={name}
+            setText={setName}
           />
-          <StyledTextInput icon="lock" placeholder="Password" password={true} />
+          {errors.name && (
+            <StyledText type="text" color="#FE616F">
+              {errors.name}
+            </StyledText>
+          )}
+          <StyledTextInput
+            icon="lock"
+            placeholder="Password"
+            password={true}
+            text={password}
+            setText={setPassword}
+          />
+          {errors.password && (
+            <StyledText type="text" color="#FE616F">
+              {errors.password}
+            </StyledText>
+          )}
         </View>
-        <TextButton variant="primary" style={styles.buttonSize}>
+        <TextButton
+          variant="primary"
+          style={styles.buttonSize}
+          onPress={handleSubmit}
+        >
           LOGIN
         </TextButton>
         <StyledText type="label">
