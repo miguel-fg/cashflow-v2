@@ -11,15 +11,17 @@ import TextButton from "../components/shared/textButton";
 import StyledText from "../components/shared/styledText";
 import StyledTextInput from "../components/shared/styledTextInput";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Link } from "expo-router";
+import { Link, useNavigation } from "expo-router";
 import { initDB } from "../db/database.js";
 import * as Crypto from "expo-crypto";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Login = () => {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [isFormValid, setIsFormValid] = useState(false);
   const [errors, setErrors] = useState({});
+  const navigation = useNavigation();
 
   useEffect(() => {
     validateForm();
@@ -66,12 +68,14 @@ const Login = () => {
         const hashedPassword = await hashPassword(password);
 
         if (hashedPassword === user.password) {
-          Alert.alert("Sucess", "Login successful!");
+          await AsyncStorage.setItem("user", JSON.stringify({ name }));
+          navigation.reset({ index: 0, routes: [{ name: "(tabs)" }] });
         } else {
           Alert.alert("Error", "Incorrect password.");
         }
       } catch (error) {
-        Alert.alert("Error", "Failed to login");
+        console.error(error);
+        Alert.alert("Error", "Failed to login: ");
       }
     } else {
       console.log("Form has errors. Please correct them.");

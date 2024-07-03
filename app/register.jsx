@@ -4,9 +4,10 @@ import StyledText from "../components/shared/styledText";
 import StyledTextInput from "../components/shared/styledTextInput";
 import TextButton from "../components/shared/textButton";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Link } from "expo-router";
+import { Link, useNavigation } from "expo-router";
 import { initDB, logUsers } from "../db/database.js";
 import * as Crypto from "expo-crypto";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -15,6 +16,7 @@ const Register = () => {
   const [confPassword, setConfPassword] = useState("");
   const [isFormValid, setIsFormValid] = useState(false);
   const [errors, setErrors] = useState({});
+  const navigation = useNavigation();
 
   useEffect(() => {
     validateForm();
@@ -74,8 +76,10 @@ const Register = () => {
           "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
           [name, email, hashedPassword],
         );
-        Alert.alert("Success", "User registered successfully!");
         logUsers();
+
+        await AsyncStorage.setItem("user", JSON.stringify({ name }));
+        navigation.reset({ index: 0, routes: [{ name: "(tabs)" }] });
       } catch (error) {
         Alert.alert("Error", "Failed to register user.");
       }
