@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Stack } from "expo-router/stack";
+import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createTables } from "../db/database";
 
 export default function RootLayout() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const initializeDatabase = async () => {
@@ -20,17 +22,20 @@ export default function RootLayout() {
     checkUser();
   }, []);
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace("(tabs)");
+    } else {
+      router.replace("index");
+    }
+  }, [isAuthenticated]);
+
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      {!isAuthenticated ? (
-        <>
-          <Stack.Screen name="index" />
-          <Stack.Screen name="login" />
-          <Stack.Screen name="register" />
-        </>
-      ) : (
-        <Stack.Screen name="(tabs)" />
-      )}
+      <Stack.Screen name="index" />
+      <Stack.Screen name="login" />
+      <Stack.Screen name="register" />
+      <Stack.Screen name="(tabs)" />
     </Stack>
   );
 }
