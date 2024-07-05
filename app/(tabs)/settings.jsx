@@ -32,7 +32,7 @@ const Settings = () => {
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem("user");
-    navigation.reset({ index: 0, routes: [{ name: "index" }] });
+    navigation.reset({ index: 0, routes: [{ name: "welcome" }] });
   };
 
   const confirmLogout = () => {

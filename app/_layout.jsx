@@ -26,13 +26,13 @@ export default function RootLayout() {
     if (isAuthenticated) {
       router.replace("(tabs)");
     } else {
-      router.replace("index");
+      router.replace("welcome");
     }
   }, [isAuthenticated]);
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="index" />
+      <Stack.Screen name="welcome" />
       <Stack.Screen name="login" />
       <Stack.Screen name="register" />
       <Stack.Screen name="(tabs)" />
