@@ -47,10 +47,19 @@ const Register = () => {
     setIsFormValid(Object.keys(errors).length === 0);
   };
 
-  const hashPassword = async (password) => {
+  const generateSalt = async (length = 10) => {
+    const randomBytes = Crypto.getRandomBytes(length);
+    return Array.from(randomBytes)
+      .map((byte) => byte.toString(16).padStart(2, "0"))
+      .join("")
+      .slice(0, length);
+  };
+
+  const hashPassword = async (password, salt) => {
+    const saltedPW = password + salt;
     const digest = await Crypto.digestStringAsync(
       Crypto.CryptoDigestAlgorithm.SHA256,
-      password,
+      saltedPW,
     );
 
     return digest;
@@ -70,13 +79,13 @@ const Register = () => {
           return;
         }
 
-        const hashedPassword = await hashPassword(password);
+        const salt = await generateSalt();
+        const hashedPassword = await hashPassword(password, salt);
 
         await db.runAsync(
-          "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
-          [name, email, hashedPassword],
+          "INSERT INTO users (username, email, password, salt) VALUES (?, ?, ?, ?)",
+          [name, email, hashedPassword, salt],
         );
-        logUsers();
 
         await AsyncStorage.setItem("user", JSON.stringify({ name }));
         navigation.reset({ index: 0, routes: [{ name: "(tabs)" }] });
