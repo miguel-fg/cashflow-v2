@@ -24,7 +24,8 @@ const createTables = async () => {
       CREATE TABLE IF NOT EXISTS accounts (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER,
-        currency TEXT,
+        name TEXT NOT NULL UNIQUE,
+        currency TEXT NOT NULL,
         type TEXT,
         amount REAL DEFAULT 0,
         credit BOOLEAN DEFAULT 0,
