@@ -28,7 +28,16 @@ const getIconSource = (icon) => {
 };
 
 const StyledTextInput = (props) => {
-  const { icon, placeholder, password, text, setText } = props;
+  const {
+    icon,
+    placeholder,
+    password,
+    text,
+    setText,
+    keyboardType,
+    inputMode,
+    onEndEditing,
+  } = props;
 
   const [fontsLoaded] = useFonts({ SpaceGrotesk_400Regular });
 
@@ -56,6 +65,9 @@ const StyledTextInput = (props) => {
         secureTextEntry={password}
         onChangeText={setText}
         style={styles.input}
+        keyboardType={keyboardType}
+        inputMode={inputMode}
+        onEndEditing={onEndEditing}
       />
     </View>
   );
@@ -68,7 +80,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderColor: "#416788",
     borderWidth: 1,
-    marginTop: 10,
     alignItems: "center",
     shadowColor: "#416788",
     shadowOffset: { width: -2, height: 2 },

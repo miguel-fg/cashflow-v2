@@ -10,10 +10,29 @@ const AddAccount = (props) => {
   const [name, setName] = useState("");
   const [type, setType] = useState("");
   const [credit, setCredit] = useState(false);
-  const [amount, setAmount] = useState(0);
+  const [formattedAmount, setFormattedAmount] = useState("");
+  const [rawAmount, setRawAmount] = useState(0);
   const [currency, setCurrency] = useState("");
   const [isFormValid, setIsFormValid] = useState(false);
   const [errors, setErrors] = useState({});
+
+  const handleAmountChange = (input) => {
+    let cleanedInput = input.replace(/[^0-9.]/g, "");
+
+    const parts = cleanedInput.split(".");
+    if (parts[1]) {
+      cleanedInput = `${parts[0]}.${parts[1].slice(0, 2)}`;
+    }
+
+    const numericValue = parseFloat(cleanedInput);
+    setRawAmount(isNaN(numericValue) ? 0 : numericValue);
+    setFormattedAmount(input);
+  };
+
+  const formatAmount = () => {
+    const formattedInput = `$${rawAmount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+    setFormattedAmount(formattedInput);
+  };
 
   const validateForm = () => {
     let errors = {};
@@ -39,6 +58,13 @@ const AddAccount = (props) => {
 
     if (isFormValid) {
       console.log("Form submitted!");
+      setName("");
+      setType("");
+      setCredit(false);
+      setFormattedAmount("$0.00");
+      setRawAmount(0);
+      setCurrency("");
+      setAttempted(false);
       onClose();
     } else {
       console.error("Form has errors. Please correct them.");
@@ -47,7 +73,7 @@ const AddAccount = (props) => {
 
   useEffect(() => {
     validateForm();
-  }, [name, type, amount, currency, attempted]);
+  }, [name, type, currency, attempted]);
 
   return (
     <Modal animationType="slide" transparent={false} visible={isVisible}>
@@ -58,49 +84,68 @@ const AddAccount = (props) => {
         </View>
         <StyledText type="title">Add details of your new account.</StyledText>
         <View style={styles.inputContainer}>
-          <StyledTextInput
-            icon="description"
-            placeholder="Name"
-            password={false}
-            text={name}
-            setText={setName}
-          />
-          {attempted && errors.name && (
-            <StyledText type="text" color="#FE616F">
-              {errors.name}
+          <View style={styles.inputGroup}>
+            <StyledText type="text">Name</StyledText>
+            <StyledTextInput
+              icon="description"
+              placeholder="TD Checking"
+              password={false}
+              text={name}
+              setText={setName}
+            />
+            {attempted && errors.name && (
+              <StyledText type="text" color="#FE616F">
+                {errors.name}
+              </StyledText>
+            )}
+          </View>
+          <View style={styles.inputGroup}>
+            <StyledText type="text" style={styles.inputLabel}>
+              Account Type
             </StyledText>
-          )}
-          <StyledTextInput
-            icon="type"
-            placeholder="Account Type"
-            password={false}
-            text={type}
-            setText={setType}
-          />
-          {attempted && errors.type && (
-            <StyledText type="text" color="#FE616F">
-              {errors.type}
+            <StyledTextInput
+              icon="type"
+              placeholder="Mastercard"
+              password={false}
+              text={type}
+              setText={setType}
+            />
+            {attempted && errors.type && (
+              <StyledText type="text" color="#FE616F">
+                {errors.type}
+              </StyledText>
+            )}
+          </View>
+          <View style={styles.inputGroup}>
+            <StyledText type="text">
+              {credit ? "Current Limit" : "Current Amount"}
             </StyledText>
-          )}
-          <StyledTextInput
-            icon="amount"
-            placeholder={credit ? "Current Limit" : "Current Amount"}
-            password={false}
-            text={amount}
-            setText={setAmount}
-          />
-          <StyledTextInput
-            icon="currency"
-            placeholder="Currency"
-            password={false}
-            text={currency}
-            setText={setCurrency}
-          />
-          {attempted && errors.currency && (
-            <StyledText type="text" color="#FE616F">
-              {errors.currency}
-            </StyledText>
-          )}
+            <StyledTextInput
+              icon="amount"
+              password={false}
+              placeholder="$0.00"
+              text={formattedAmount}
+              setText={handleAmountChange}
+              keyboardType="numeric"
+              inputMode="numeric"
+              onEndEditing={formatAmount}
+            />
+          </View>
+          <View style={styles.inputGroup}>
+            <StyledText type="text">Currency</StyledText>
+            <StyledTextInput
+              icon="currency"
+              placeholder="CAD"
+              password={false}
+              text={currency}
+              setText={setCurrency}
+            />
+            {attempted && errors.currency && (
+              <StyledText type="text" color="#FE616F">
+                {errors.currency}
+              </StyledText>
+            )}
+          </View>
         </View>
         <View style={styles.buttonContainer}>
           <View style={styles.buttons}>
@@ -139,6 +184,9 @@ const styles = StyleSheet.create({
     marginTop: 50,
     marginBottom: 30,
   },
+  inputGroup: {
+    marginTop: 10,
+  },
   inputContainer: {
     width: "80%",
     marginTop: 20,
@@ -152,7 +200,7 @@ const styles = StyleSheet.create({
   buttons: {
     alignItems: "center",
     width: "100%",
-    marginBottom: 80,
+    marginBottom: 40,
   },
   buttonSize: {
     width: "80%",
