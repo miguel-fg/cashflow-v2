@@ -18,22 +18,20 @@ const AddAccount = (props) => {
   const validateForm = () => {
     let errors = {};
 
-    if (attempted) {
-      if (!name) {
-        errors.name = "Account name required.";
-      }
-
-      if (!type) {
-        errors.type = "Account type required.";
-      }
-
-      if (!currency) {
-        errors.currency = "Currency required.";
-      }
-
-      setErrors(errors);
-      setIsFormValid(Object.keys(errors).length === 0);
+    if (!name) {
+      errors.name = "Account name required.";
     }
+
+    if (!type) {
+      errors.type = "Account type required.";
+    }
+
+    if (!currency) {
+      errors.currency = "Currency required.";
+    }
+
+    setErrors(errors);
+    setIsFormValid(Object.keys(errors).length === 0);
   };
 
   const handleSubmit = () => {
@@ -67,7 +65,7 @@ const AddAccount = (props) => {
             text={name}
             setText={setName}
           />
-          {errors.name && (
+          {attempted && errors.name && (
             <StyledText type="text" color="#FE616F">
               {errors.name}
             </StyledText>
@@ -79,7 +77,7 @@ const AddAccount = (props) => {
             text={type}
             setText={setType}
           />
-          {errors.type && (
+          {attempted && errors.type && (
             <StyledText type="text" color="#FE616F">
               {errors.type}
             </StyledText>
@@ -98,7 +96,7 @@ const AddAccount = (props) => {
             text={currency}
             setText={setCurrency}
           />
-          {errors.currency && (
+          {attempted && errors.currency && (
             <StyledText type="text" color="#FE616F">
               {errors.currency}
             </StyledText>
