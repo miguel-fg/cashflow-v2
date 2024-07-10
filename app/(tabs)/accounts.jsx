@@ -1,17 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
 import { SafeAreaView, StyleSheet, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import HomeAppBar from "../../components/home/HomeAppBar";
 import StyledText from "../../components/shared/styledText";
 import AccountsList from "../../components/accounts/AccountsList";
 import AddNewButton from "../../components/shared/addNewButton";
+import AddAccount from "../../components/shared/addAccount";
 
 const Accounts = () => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
   const handleAddNew = () => {
-    console.log("Adding new! :)");
+    setIsModalVisible(true);
   };
+
+  const closeModal = () => {
+    setIsModalVisible(false);
+  };
+
   return (
     <>
+      <AddAccount isVisible={isModalVisible} onClose={closeModal} />
       <StatusBar style="light" translucent={true} />
       <SafeAreaView style={styles.container}>
         <HomeAppBar>

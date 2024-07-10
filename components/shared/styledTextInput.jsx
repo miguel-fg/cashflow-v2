@@ -14,6 +14,16 @@ const getIconSource = (icon) => {
       return require("../../assets/images/icons/password.png");
     case "email":
       return require("../../assets/images/icons/email.png");
+    case "type":
+      return require("../../assets/images/icons/account_type.png");
+    case "amount":
+      return require("../../assets/images/icons/amount.png");
+    case "currency":
+      return require("../../assets/images/icons/currency.png");
+    case "description":
+      return require("../../assets/images/icons/description.png");
+    case "category":
+      return require("../../assets/images/icons/category.png");
   }
 };
 
