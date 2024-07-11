@@ -2,19 +2,35 @@ import React, { useState, useEffect } from "react";
 import { Modal, View, StyleSheet, StatusBar } from "react-native";
 import StyledText from "./styledText.jsx";
 import StyledTextInput from "./styledTextInput.jsx";
+import StyledDropdown from "./styledDropdown.jsx";
+import StyledCheckbox from "./styledCheckbox.jsx";
 import TextButton from "./textButton.jsx";
 
 const AddAccount = (props) => {
   const { isVisible, onClose } = props;
   const [attempted, setAttempted] = useState(false);
   const [name, setName] = useState("");
-  const [type, setType] = useState("");
+  const [type, setType] = useState("mastercard");
   const [credit, setCredit] = useState(false);
   const [formattedAmount, setFormattedAmount] = useState("");
   const [rawAmount, setRawAmount] = useState(0);
   const [currency, setCurrency] = useState("");
   const [isFormValid, setIsFormValid] = useState(false);
   const [errors, setErrors] = useState({});
+  const typeEnum = [
+    {
+      label: "Mastercard",
+      value: "mastercard",
+    },
+    {
+      label: "Visa",
+      value: "visa",
+    },
+    {
+      label: "Other",
+      value: "other",
+    },
+  ];
 
   const handleAmountChange = (input) => {
     let cleanedInput = input.replace(/[^0-9.]/g, "");
@@ -29,6 +45,14 @@ const AddAccount = (props) => {
     setFormattedAmount(input);
   };
 
+  const handleSelectType = (value) => {
+    setType(value);
+  };
+
+  const handleCheckboxToggle = (isChecked) => {
+    setCredit(isChecked);
+  };
+
   const formatAmount = () => {
     const formattedInput = `$${rawAmount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
     setFormattedAmount(formattedInput);
@@ -39,10 +63,6 @@ const AddAccount = (props) => {
 
     if (!name) {
       errors.name = "Account name required.";
-    }
-
-    if (!type) {
-      errors.type = "Account type required.";
     }
 
     if (!currency) {
@@ -57,9 +77,14 @@ const AddAccount = (props) => {
     setAttempted(true);
 
     if (isFormValid) {
-      console.log("Form submitted!");
+      console.log("Form submitted with values:");
+      console.log("Name: ", name);
+      console.log("Type: ", type);
+      console.log("Credit: ", credit);
+      console.log("Amount: ", rawAmount);
+      console.log("Currency: ", currency);
       setName("");
-      setType("");
+      setType("mastercard");
       setCredit(false);
       setFormattedAmount("$0.00");
       setRawAmount(0);
@@ -99,22 +124,27 @@ const AddAccount = (props) => {
               </StyledText>
             )}
           </View>
-          <View style={styles.inputGroup}>
-            <StyledText type="text" style={styles.inputLabel}>
-              Account Type
-            </StyledText>
-            <StyledTextInput
-              icon="type"
-              placeholder="Mastercard"
-              password={false}
-              text={type}
-              setText={setType}
-            />
-            {attempted && errors.type && (
-              <StyledText type="text" color="#FE616F">
-                {errors.type}
+          <View style={styles.typeContainer}>
+            <View style={styles.inputGroup}>
+              <StyledText type="text" style={styles.inputLabel}>
+                Account Type
               </StyledText>
-            )}
+              <StyledDropdown
+                data={typeEnum}
+                icon="type"
+                onSelect={handleSelectType}
+              />
+            </View>
+            <View style={styles.creditContainer}>
+              <StyledText type="text" style={styles.inputLabel}>
+                Credit
+              </StyledText>
+              <StyledCheckbox
+                size={30}
+                isChecked={credit}
+                onToggle={handleCheckboxToggle}
+              />
+            </View>
           </View>
           <View style={styles.inputGroup}>
             <StyledText type="text">
@@ -186,6 +216,19 @@ const styles = StyleSheet.create({
   },
   inputGroup: {
     marginTop: 10,
+    flexGrow: 1,
+    flexBasis: "auto",
+  },
+  creditContainer: {
+    marginTop: 10,
+    marginLeft: 10,
+    alignItems: "flex-end",
+  },
+  typeContainer: {
+    flex: -1,
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   inputContainer: {
     width: "80%",
