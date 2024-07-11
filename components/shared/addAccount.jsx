@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Modal, View, StyleSheet, StatusBar } from "react-native";
+import { Modal, View, StyleSheet, StatusBar, Keyboard } from "react-native";
 import StyledText from "./styledText.jsx";
 import StyledTextInput from "./styledTextInput.jsx";
 import StyledDropdown from "./styledDropdown.jsx";
@@ -17,6 +17,8 @@ const AddAccount = (props) => {
   const [currency, setCurrency] = useState("");
   const [isFormValid, setIsFormValid] = useState(false);
   const [errors, setErrors] = useState({});
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+
   const typeEnum = [
     {
       label: "Mastercard",
@@ -100,6 +102,27 @@ const AddAccount = (props) => {
     validateForm();
   }, [name, type, currency, attempted]);
 
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => {
+        setIsKeyboardVisible(true);
+      },
+    );
+
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        setIsKeyboardVisible(false);
+      },
+    );
+
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
+
   return (
     <Modal animationType="slide" transparent={false} visible={isVisible}>
       <StatusBar barStyle="dark-content" backgroundColor="#EEF0F2" />
@@ -177,24 +200,26 @@ const AddAccount = (props) => {
             )}
           </View>
         </View>
-        <View style={styles.buttonContainer}>
-          <View style={styles.buttons}>
-            <TextButton
-              variant="primary"
-              style={styles.buttonSize}
-              onPress={handleSubmit}
-            >
-              ADD
-            </TextButton>
-            <TextButton
-              variant="danger"
-              style={styles.buttonSize}
-              onPress={onClose}
-            >
-              CANCEL
-            </TextButton>
+        {!isKeyboardVisible && (
+          <View style={styles.buttonContainer}>
+            <View style={styles.buttons}>
+              <TextButton
+                variant="primary"
+                style={styles.buttonSize}
+                onPress={handleSubmit}
+              >
+                ADD
+              </TextButton>
+              <TextButton
+                variant="danger"
+                style={styles.buttonSize}
+                onPress={onClose}
+              >
+                CANCEL
+              </TextButton>
+            </View>
           </View>
-        </View>
+        )}
       </View>
     </Modal>
   );
