@@ -11,7 +11,7 @@ import AccountCard from "./AccountCard";
 import { initDB } from "../../db/database";
 
 const AccountsList = (props) => {
-  const { userId, credit, fetchFlag } = props;
+  const { userId, credit, fetchFlag, setFetchFlag } = props;
   const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -57,10 +57,12 @@ const AccountsList = (props) => {
           renderItem={({ item }) => (
             <AccountCard
               key={item.id}
+              accountId={item.id}
               name={item.name}
               currency={item.currency}
               type={item.type}
               amount={item.amount}
+              setFetchFlag={setFetchFlag}
             />
           )}
         />

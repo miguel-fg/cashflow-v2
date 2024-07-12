@@ -84,11 +84,21 @@ const Accounts = () => {
           <View style={styles.titleContainer}>
             <StyledText type="title">Banking</StyledText>
           </View>
-          <AccountsList userId={userId} credit={0} fetchFlag={fetchFlag} />
+          <AccountsList
+            userId={userId}
+            credit={0}
+            fetchFlag={fetchFlag}
+            setFetchFlag={setFetchFlag}
+          />
           <View style={styles.titleContainer}>
             <StyledText type="title">Credit</StyledText>
           </View>
-          <AccountsList userId={userId} credit={1} fetchFlag={fetchFlag} />
+          <AccountsList
+            userId={userId}
+            credit={1}
+            fetchFlag={fetchFlag}
+            setFetchFlag={setFetchFlag}
+          />
         </View>
         <View style={styles.bottomContainer}>
           <AddNewButton style={styles.buttonSize} onPress={handleAddNew} />
