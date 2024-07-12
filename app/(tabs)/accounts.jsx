@@ -65,6 +65,7 @@ const Accounts = () => {
     <>
       <AddAccount
         userId={userId}
+        isEditing={false}
         isVisible={isModalVisible}
         onClose={closeModal}
       />

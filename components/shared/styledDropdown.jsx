@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Image,
@@ -31,12 +31,17 @@ const getIconSource = (icon) => {
 };
 
 const StyledDropdown = (props) => {
-  const { data, icon, style, onSelect } = props;
+  const { data, icon, style, onSelect, item } = props;
   const [isOpen, setIsOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState("Mastercard");
   const [dropdownTop, setDropdownTop] = useState(0);
   const dropdownRef = useRef(null);
   const iconSource = getIconSource(icon);
+
+  useEffect(() => {
+    const capitalize = (s) => s && s[0].toUpperCase() + s.slice(1);
+    setSelectedItem(capitalize(item));
+  }, [item]);
 
   const handleSelect = (item) => {
     setSelectedItem(item.label);

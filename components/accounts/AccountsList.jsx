@@ -57,11 +57,13 @@ const AccountsList = (props) => {
           renderItem={({ item }) => (
             <AccountCard
               key={item.id}
+              userId={userId}
               accountId={item.id}
               name={item.name}
               currency={item.currency}
               type={item.type}
               amount={item.amount}
+              credit={item.credit}
               setFetchFlag={setFetchFlag}
             />
           )}

@@ -10,6 +10,7 @@ import {
 import StyledText from "../shared/styledText";
 import TextButton from "../shared/textButton";
 import { initDB } from "../../db/database";
+import AddAccount from "../shared/addAccount";
 
 const getIconSource = (type) => {
   switch (type) {
@@ -32,8 +33,17 @@ const formatAmount = (amount) => {
 
 const AccountCard = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
+  const [editingVisible, setEditingVisible] = useState(false);
   const iconSource = getIconSource(props.type);
   const formattedAmount = formatAmount(props.amount);
+  const currentAccount = {
+    id: props.accountId,
+    name: props.name,
+    type: props.type,
+    credit: props.credit,
+    amount: props.amount,
+    currency: props.currency,
+  };
 
   const handlePressAndHold = () => {
     setModalVisible(true);
@@ -41,6 +51,12 @@ const AccountCard = (props) => {
 
   const handleEdit = () => {
     setModalVisible(false);
+    setEditingVisible(true);
+  };
+
+  const closeEdit = () => {
+    setEditingVisible(false);
+    props.setFetchFlag((prev) => !prev);
   };
 
   const handleDelete = () => {
@@ -79,6 +95,13 @@ const AccountCard = (props) => {
 
   return (
     <TouchableOpacity onLongPress={handlePressAndHold} activeOpacity={0.5}>
+      <AddAccount
+        userId={props.userId}
+        isEditing={true}
+        toEditAccount={currentAccount}
+        isVisible={editingVisible}
+        onClose={closeEdit}
+      />
       <View style={styles.container}>
         <View style={styles.left}>
           <View style={styles.iconContainer}>

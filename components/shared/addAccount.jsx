@@ -9,7 +9,7 @@ import { iso4217CurrencyCodes } from "../../constants/currencyCodes.js";
 import { initDB } from "../../db/database.js";
 
 const AddAccount = (props) => {
-  const { userId, isVisible, onClose } = props;
+  const { userId, isEditing, toEditAccount, isVisible, onClose } = props;
   const [attempted, setAttempted] = useState(false);
   const [name, setName] = useState("");
   const [type, setType] = useState("mastercard");
@@ -20,6 +20,17 @@ const AddAccount = (props) => {
   const [isFormValid, setIsFormValid] = useState(false);
   const [errors, setErrors] = useState({});
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    if (toEditAccount) {
+      setName(toEditAccount.name);
+      setType(toEditAccount.type);
+      setRawAmount(toEditAccount.amount);
+      setCurrency(toEditAccount.currency);
+      setCredit(toEditAccount.credit === 1);
+      formatAmount();
+    }
+  }, [toEditAccount, rawAmount]);
 
   const typeEnum = [
     {
@@ -89,11 +100,18 @@ const AddAccount = (props) => {
         const currencyValue = currency.toUpperCase();
         const typeValue = type.toLowerCase().trim();
 
-        await db.runAsync(
-          "INSERT INTO accounts (user_id, name, currency, type, amount, credit) VALUES (?, ?, ?, ?, ?, ?)",
-          [userId, name, currencyValue, typeValue, rawAmount, creditValue],
-        );
-
+        if (!isEditing) {
+          await db.runAsync(
+            "INSERT INTO accounts (user_id, name, currency, type, amount, credit) VALUES (?, ?, ?, ?, ?, ?)",
+            [userId, name, currencyValue, typeValue, rawAmount, creditValue],
+          );
+        } else {
+          const accountId = toEditAccount.id;
+          await db.runAsync(
+            "UPDATE accounts SET name = ?, currency = ?, type = ?, credit = ? WHERE user_id = ? AND id = ?",
+            [name, currencyValue, typeValue, creditValue, userId, accountId],
+          );
+        }
         setName("");
         setType("mastercard");
         setCredit(false);
@@ -168,6 +186,7 @@ const AddAccount = (props) => {
                 data={typeEnum}
                 icon="type"
                 onSelect={handleSelectType}
+                item={type}
               />
             </View>
             <View style={styles.creditContainer}>
