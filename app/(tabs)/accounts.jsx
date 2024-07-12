@@ -17,6 +17,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const Accounts = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [userId, setUserId] = useState(null);
+  const [fetchFlag, setFetchFlag] = useState(false);
 
   const handleAddNew = () => {
     setIsModalVisible(true);
@@ -24,6 +25,7 @@ const Accounts = () => {
 
   const closeModal = () => {
     setIsModalVisible(false);
+    setFetchFlag((prev) => !prev);
   };
 
   useEffect(() => {
@@ -40,7 +42,6 @@ const Accounts = () => {
           );
 
           if (result) {
-            console.log("result: ", result);
             setUserId(result.id);
           }
         }
@@ -83,11 +84,11 @@ const Accounts = () => {
           <View style={styles.titleContainer}>
             <StyledText type="title">Banking</StyledText>
           </View>
-          <AccountsList userId={userId} credit={0} />
+          <AccountsList userId={userId} credit={0} fetchFlag={fetchFlag} />
           <View style={styles.titleContainer}>
             <StyledText type="title">Credit</StyledText>
           </View>
-          <AccountsList userId={userId} credit={1} />
+          <AccountsList userId={userId} credit={1} fetchFlag={fetchFlag} />
         </View>
         <View style={styles.bottomContainer}>
           <AddNewButton style={styles.buttonSize} onPress={handleAddNew} />

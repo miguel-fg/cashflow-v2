@@ -4,9 +4,9 @@ import StyledText from "../shared/styledText";
 
 const getIconSource = (type) => {
   switch (type) {
-    case "Mastercard":
+    case "mastercard":
       return require("../../assets/images/icons/mastercard.png");
-    case "Visa":
+    case "visa":
       return require("../../assets/images/icons/visa.png");
     default:
       return require("../../assets/images/icons/other_banking.png");

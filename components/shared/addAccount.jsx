@@ -6,6 +6,7 @@ import StyledDropdown from "./styledDropdown.jsx";
 import StyledCheckbox from "./styledCheckbox.jsx";
 import TextButton from "./textButton.jsx";
 import { iso4217CurrencyCodes } from "../../constants/currencyCodes.js";
+import { initDB } from "../../db/database.js";
 
 const AddAccount = (props) => {
   const { userId, isVisible, onClose } = props;
@@ -78,24 +79,32 @@ const AddAccount = (props) => {
     setIsFormValid(Object.keys(errors).length === 0);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setAttempted(true);
 
     if (isFormValid) {
-      console.log("Form submitted with values:");
-      console.log("Name: ", name);
-      console.log("Type: ", type);
-      console.log("Credit: ", credit);
-      console.log("Amount: ", rawAmount);
-      console.log("Currency: ", currency);
-      setName("");
-      setType("mastercard");
-      setCredit(false);
-      setFormattedAmount("$0.00");
-      setRawAmount(0);
-      setCurrency("");
-      setAttempted(false);
-      onClose();
+      try {
+        const db = await initDB();
+        const creditValue = credit ? 1 : 0;
+        const currencyValue = currency.toUpperCase();
+        const typeValue = type.toLowerCase().trim();
+
+        await db.runAsync(
+          "INSERT INTO accounts (user_id, name, currency, type, amount, credit) VALUES (?, ?, ?, ?, ?, ?)",
+          [userId, name, currencyValue, typeValue, rawAmount, creditValue],
+        );
+
+        setName("");
+        setType("mastercard");
+        setCredit(false);
+        setFormattedAmount("$0.00");
+        setRawAmount(0);
+        setCurrency("");
+        setAttempted(false);
+        onClose();
+      } catch (error) {
+        console.error("Failed to submit form.", error);
+      }
     } else {
       console.error("Form has errors. Please correct them.");
     }

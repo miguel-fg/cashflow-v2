@@ -1,53 +1,59 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, FlatList, Alert } from "react-native";
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  Alert,
+  SafeAreaView,
+  ActivityIndicator,
+} from "react-native";
 import AccountCard from "./AccountCard";
-import StyledText from "../shared/styledText";
 import { initDB } from "../../db/database";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
-const data = [
-  {
-    id: 1,
-    name: "TD Unlimited Checking",
-    currency: "CAD",
-    type: "Visa",
-    amount: 987.3,
-    credit: 0,
-  },
-  {
-    id: 2,
-    name: "TD Every Day Savings",
-    currency: "CAD",
-    type: "Other",
-    amount: 1578.27,
-    credit: 0,
-  },
-  {
-    id: 3,
-    name: "Banamex Perfiles",
-    currency: "MXN",
-    type: "Mastercard",
-    amount: 1243,
-    credit: 0,
-  },
-  {
-    id: 4,
-    name: "TD Cash Back",
-    currency: "CAD",
-    type: "Visa",
-    amount: 674.34,
-    credit: 1,
-  },
-];
 
 const AccountsList = (props) => {
-  const { userId, credit } = props;
-  const filteredAccounts = data.filter((item) => item.credit === credit);
+  const { userId, credit, fetchFlag } = props;
+  const [accounts, setAccounts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAccounts = async () => {
+      try {
+        const db = await initDB();
+        const result = await db.getAllAsync(
+          "SELECT * FROM accounts WHERE user_id = ? AND credit = ?",
+          [userId, credit],
+        );
+
+        if (result.length > 0) {
+          setAccounts(result);
+        }
+      } catch (error) {
+        console.error("Failed to fetch accounts ", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAccounts();
+  }, [fetchFlag]);
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="small" color="#416788" />
+      </View>
+    );
+  }
+
+  if (accounts.length === 0) {
+    return <></>;
+  }
+
   return (
     <>
       <View>
         <FlatList
-          data={filteredAccounts}
+          data={accounts}
           renderItem={({ item }) => (
             <AccountCard
               key={item.id}
@@ -62,5 +68,11 @@ const AccountsList = (props) => {
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    width: "100%",
+  },
+});
 
 export default AccountsList;
