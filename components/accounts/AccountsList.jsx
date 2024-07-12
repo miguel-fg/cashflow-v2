@@ -41,7 +41,8 @@ const data = [
 ];
 
 const AccountsList = (props) => {
-  const filteredAccounts = data.filter((item) => item.credit === props.credit);
+  const { userId, credit } = props;
+  const filteredAccounts = data.filter((item) => item.credit === credit);
   return (
     <>
       <View>

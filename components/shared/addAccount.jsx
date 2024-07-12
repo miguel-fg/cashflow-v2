@@ -5,9 +5,10 @@ import StyledTextInput from "./styledTextInput.jsx";
 import StyledDropdown from "./styledDropdown.jsx";
 import StyledCheckbox from "./styledCheckbox.jsx";
 import TextButton from "./textButton.jsx";
+import { iso4217CurrencyCodes } from "../../constants/currencyCodes.js";
 
 const AddAccount = (props) => {
-  const { isVisible, onClose } = props;
+  const { userId, isVisible, onClose } = props;
   const [attempted, setAttempted] = useState(false);
   const [name, setName] = useState("");
   const [type, setType] = useState("mastercard");
@@ -69,6 +70,8 @@ const AddAccount = (props) => {
 
     if (!currency) {
       errors.currency = "Currency required.";
+    } else if (!iso4217CurrencyCodes.includes(currency.toUpperCase())) {
+      errors.currency = "Invalid currency code.";
     }
 
     setErrors(errors);
