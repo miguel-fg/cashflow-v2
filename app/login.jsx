@@ -42,10 +42,11 @@ const Login = () => {
     setIsFormValid(Object.keys(errors).length === 0);
   };
 
-  const hashPassword = async (password) => {
+  const hashPassword = async (password, salt) => {
+    const saltedPW = password + salt;
     const digest = await Crypto.digestStringAsync(
       Crypto.CryptoDigestAlgorithm.SHA256,
-      password,
+      saltedPW,
     );
 
     return digest;
@@ -65,7 +66,7 @@ const Login = () => {
           return;
         }
 
-        const hashedPassword = await hashPassword(password);
+        const hashedPassword = await hashPassword(password, user.salt);
 
         if (hashedPassword === user.password) {
           await AsyncStorage.setItem("user", JSON.stringify({ name }));

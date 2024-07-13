@@ -29,6 +29,8 @@ const getTextStyle = (variant) => {
       return "dark";
     case "danger":
       return "light";
+    case "success":
+      return "light";
   }
 };
 
@@ -40,6 +42,8 @@ const getButtonVariant = (variant) => {
       return styles["buttonSecondary"];
     case "danger":
       return styles["buttonDanger"];
+    case "success":
+      return styles["buttonSuccess"];
   }
 };
 
@@ -67,6 +71,11 @@ const styles = StyleSheet.create({
   buttonDanger: {
     backgroundColor: "#FE616F",
     borderColor: "#FE616F",
+    borderWidth: 3,
+  },
+  buttonSuccess: {
+    backgroundColor: "#62A87C",
+    borderColor: "#62A87C",
     borderWidth: 3,
   },
 });

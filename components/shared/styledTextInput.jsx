@@ -14,11 +14,31 @@ const getIconSource = (icon) => {
       return require("../../assets/images/icons/password.png");
     case "email":
       return require("../../assets/images/icons/email.png");
+    case "type":
+      return require("../../assets/images/icons/account_type.png");
+    case "amount":
+      return require("../../assets/images/icons/amount.png");
+    case "currency":
+      return require("../../assets/images/icons/currency.png");
+    case "description":
+      return require("../../assets/images/icons/description.png");
+    case "category":
+      return require("../../assets/images/icons/category.png");
   }
 };
 
 const StyledTextInput = (props) => {
-  const { icon, placeholder, password, text, setText } = props;
+  const {
+    icon,
+    placeholder,
+    password,
+    text,
+    setText,
+    keyboardType,
+    inputMode,
+    onEndEditing,
+    disabled,
+  } = props;
 
   const [fontsLoaded] = useFonts({ SpaceGrotesk_400Regular });
 
@@ -46,6 +66,10 @@ const StyledTextInput = (props) => {
         secureTextEntry={password}
         onChangeText={setText}
         style={styles.input}
+        keyboardType={keyboardType}
+        inputMode={inputMode}
+        onEndEditing={onEndEditing}
+        editable={disabled}
       />
     </View>
   );
@@ -58,7 +82,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderColor: "#416788",
     borderWidth: 1,
-    marginTop: 10,
     alignItems: "center",
     shadowColor: "#416788",
     shadowOffset: { width: -2, height: 2 },

@@ -22,7 +22,6 @@ const Settings = () => {
           "SELECT * FROM users WHERE username = ?",
           [name],
         );
-        console.log(userDetails);
         setUser(userDetails);
       }
     };
