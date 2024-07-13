@@ -18,9 +18,7 @@ const AccountsList = (props) => {
           [userId, credit],
         );
 
-        if (result.length > 0) {
-          setAccounts(result);
-        }
+        setAccounts(result);
       } catch (error) {
         console.error("Failed to fetch accounts ", error);
       } finally {
