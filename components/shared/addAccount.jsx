@@ -158,9 +158,13 @@ const AddAccount = (props) => {
       <StatusBar barStyle="dark-content" backgroundColor="#EEF0F2" />
       <View style={styles.modalContainer}>
         <View style={styles.titleContainer}>
-          <StyledText type="header">New Account</StyledText>
+          <StyledText type="header">
+            {isEditing ? "Edit" : "New"} Account
+          </StyledText>
         </View>
-        <StyledText type="title">Add details of your new account.</StyledText>
+        {!isEditing && (
+          <StyledText type="title">Add details of your new account.</StyledText>
+        )}
         <View style={styles.inputContainer}>
           <View style={styles.inputGroup}>
             <StyledText type="text">Name</StyledText>
@@ -213,7 +217,13 @@ const AddAccount = (props) => {
               keyboardType="numeric"
               inputMode="numeric"
               onEndEditing={formatAmount}
+              disabled={!isEditing}
             />
+            {isEditing && (
+              <StyledText type="text">
+                Account {credit ? "limit" : "budget"} cannot be changed.
+              </StyledText>
+            )}
           </View>
           <View style={styles.inputGroup}>
             <StyledText type="text">Currency</StyledText>
@@ -239,7 +249,7 @@ const AddAccount = (props) => {
                 style={styles.buttonSize}
                 onPress={handleSubmit}
               >
-                ADD
+                {isEditing ? "UPDATE" : "ADD"}
               </TextButton>
               <TextButton
                 variant="danger"

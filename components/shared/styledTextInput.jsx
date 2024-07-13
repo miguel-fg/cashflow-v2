@@ -37,6 +37,7 @@ const StyledTextInput = (props) => {
     keyboardType,
     inputMode,
     onEndEditing,
+    disabled,
   } = props;
 
   const [fontsLoaded] = useFonts({ SpaceGrotesk_400Regular });
@@ -68,6 +69,7 @@ const StyledTextInput = (props) => {
         keyboardType={keyboardType}
         inputMode={inputMode}
         onEndEditing={onEndEditing}
+        editable={disabled}
       />
     </View>
   );
