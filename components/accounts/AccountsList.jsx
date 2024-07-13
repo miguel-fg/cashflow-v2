@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  StyleSheet,
-  FlatList,
-  Alert,
-  SafeAreaView,
-  ActivityIndicator,
-} from "react-native";
+import { View, StyleSheet, FlatList, ActivityIndicator } from "react-native";
 import AccountCard from "./AccountCard";
 import { initDB } from "../../db/database";
 
@@ -18,6 +11,7 @@ const AccountsList = (props) => {
   useEffect(() => {
     const fetchAccounts = async () => {
       try {
+        setLoading(true);
         const db = await initDB();
         const result = await db.getAllAsync(
           "SELECT * FROM accounts WHERE user_id = ? AND credit = ?",
