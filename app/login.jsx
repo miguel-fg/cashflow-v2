@@ -106,7 +106,7 @@ const Login = () => {
             <StyledText type="text">Username</StyledText>
             <StyledTextInput
               icon="user"
-              placeholder="Mario123"
+              placeholder="Watermelon123"
               password={false}
               text={name}
               setText={setName}
@@ -121,7 +121,7 @@ const Login = () => {
             <StyledText type="text">Password</StyledText>
             <StyledTextInput
               icon="lock"
-              placeholder="******"
+              placeholder="*******"
               password={true}
               text={password}
               setText={setPassword}
