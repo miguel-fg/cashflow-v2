@@ -10,6 +10,7 @@ import * as Crypto from "expo-crypto";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Register = () => {
+  const [attempted, setAttempted] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -66,6 +67,8 @@ const Register = () => {
   };
 
   const handleSubmit = async () => {
+    setAttempted(true);
+
     if (isFormValid) {
       try {
         const db = await initDB();
@@ -109,54 +112,66 @@ const Register = () => {
           <StyledText type="text">Create your user account</StyledText>
         </View>
         <View style={styles.textInputContainer}>
-          <StyledTextInput
-            icon="user"
-            placeholder="Username"
-            password={false}
-            text={name}
-            setText={setName}
-          />
-          {errors.name && (
-            <StyledText type="text" color="#FE616F">
-              {errors.name}
-            </StyledText>
-          )}
-          <StyledTextInput
-            icon="email"
-            placeholder="Email"
-            password={false}
-            text={email}
-            setText={setEmail}
-          />
-          {errors.email && (
-            <StyledText type="text" color="#FE616F">
-              {errors.email}
-            </StyledText>
-          )}
-          <StyledTextInput
-            icon="lock"
-            placeholder="Password"
-            password={true}
-            text={password}
-            setText={setPassword}
-          />
-          {errors.password && (
-            <StyledText type="text" color="#FE616F">
-              {errors.password}
-            </StyledText>
-          )}
-          <StyledTextInput
-            icon="lock"
-            placeholder="Confirm password"
-            password={true}
-            text={confPassword}
-            setText={setConfPassword}
-          />
-          {errors.confPassword && (
-            <StyledText type="text" color="#FE616F">
-              {errors.confPassword}
-            </StyledText>
-          )}
+          <View style={styles.inputGroup}>
+            <StyledText type="text">Username</StyledText>
+            <StyledTextInput
+              icon="user"
+              placeholder="Watermelon123"
+              password={false}
+              text={name}
+              setText={setName}
+            />
+            {attempted && errors.name && (
+              <StyledText type="text" color="#FE616F">
+                {errors.name}
+              </StyledText>
+            )}
+          </View>
+          <View style={styles.inputGroup}>
+            <StyledText type="text">E-mail</StyledText>
+            <StyledTextInput
+              icon="email"
+              placeholder="watermelon@isyummy.com"
+              password={false}
+              text={email}
+              setText={setEmail}
+            />
+            {attempted && errors.email && (
+              <StyledText type="text" color="#FE616F">
+                {errors.email}
+              </StyledText>
+            )}
+          </View>
+          <View style={styles.inputGroup}>
+            <StyledText type="text">Password</StyledText>
+            <StyledTextInput
+              icon="lock"
+              placeholder="*******"
+              password={true}
+              text={password}
+              setText={setPassword}
+            />
+            {attempted && errors.password && (
+              <StyledText type="text" color="#FE616F">
+                {errors.password}
+              </StyledText>
+            )}
+          </View>
+          <View style={styles.inputGroup}>
+            <StyledText type="text">Confirm password</StyledText>
+            <StyledTextInput
+              icon="lock"
+              placeholder="*******"
+              password={true}
+              text={confPassword}
+              setText={setConfPassword}
+            />
+            {attempted && errors.confPassword && (
+              <StyledText type="text" color="#FE616F">
+                {errors.confPassword}
+              </StyledText>
+            )}
+          </View>
           <StyledText type="label" align="center">
             By registering you are agreeing to our Terms of use and Privacy
             Policy.
@@ -196,6 +211,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#EEF0F2",
     alignItems: "center",
   },
+  inputGroup: {
+    marginTop: 10,
+  },
   textContainer: {
     alignItems: "center",
     width: "100%",
@@ -208,7 +226,7 @@ const styles = StyleSheet.create({
   },
   textInputContainer: {
     width: "80%",
-    marginBottom: 100,
+    marginBottom: 60,
   },
 });
 

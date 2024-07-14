@@ -17,6 +17,7 @@ import * as Crypto from "expo-crypto";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Login = () => {
+  const [attempted, setAttempted] = useState(false);
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [isFormValid, setIsFormValid] = useState(false);
@@ -53,6 +54,8 @@ const Login = () => {
   };
 
   const handleSubmit = async () => {
+    setAttempted(true);
+
     if (isFormValid) {
       try {
         const db = await initDB();
@@ -99,30 +102,36 @@ const Login = () => {
           <StyledText type="text">Login to your account</StyledText>
         </View>
         <View style={styles.textInputContainer}>
-          <StyledTextInput
-            icon="user"
-            placeholder="Username"
-            password={false}
-            text={name}
-            setText={setName}
-          />
-          {errors.name && (
-            <StyledText type="text" color="#FE616F">
-              {errors.name}
-            </StyledText>
-          )}
-          <StyledTextInput
-            icon="lock"
-            placeholder="Password"
-            password={true}
-            text={password}
-            setText={setPassword}
-          />
-          {errors.password && (
-            <StyledText type="text" color="#FE616F">
-              {errors.password}
-            </StyledText>
-          )}
+          <View style={styles.inputGroup}>
+            <StyledText type="text">Username</StyledText>
+            <StyledTextInput
+              icon="user"
+              placeholder="Watermelon123"
+              password={false}
+              text={name}
+              setText={setName}
+            />
+            {attempted && errors.name && (
+              <StyledText type="text" color="#FE616F">
+                {errors.name}
+              </StyledText>
+            )}
+          </View>
+          <View style={styles.inputGroup}>
+            <StyledText type="text">Password</StyledText>
+            <StyledTextInput
+              icon="lock"
+              placeholder="*******"
+              password={true}
+              text={password}
+              setText={setPassword}
+            />
+            {attempted && errors.password && (
+              <StyledText type="text" color="#FE616F">
+                {errors.password}
+              </StyledText>
+            )}
+          </View>
         </View>
         <TextButton
           variant="primary"
@@ -158,16 +167,19 @@ const styles = StyleSheet.create({
     backgroundColor: "#EEF0F2",
     alignItems: "center",
   },
+  inputGroup: {
+    marginTop: 10,
+  },
   mainImage: {
-    width: 200,
-    height: 229,
+    width: 170,
+    height: 200,
     marginTop: 50,
   },
   textContainer: {
     alignItems: "center",
     width: "100%",
     marginTop: 20,
-    marginBottom: 30,
+    marginBottom: 20,
   },
   buttonSize: {
     width: "80%",
@@ -175,7 +187,7 @@ const styles = StyleSheet.create({
   },
   textInputContainer: {
     width: "80%",
-    marginBottom: 60,
+    marginBottom: 50,
   },
 });
 
