@@ -121,10 +121,10 @@ const AddAccount = (props) => {
         setAttempted(false);
         onClose();
       } catch (error) {
-        console.error("Failed to submit form.", error);
+        console.log("Failed to submit form.", error);
       }
     } else {
-      console.error("Form has errors. Please correct them.");
+      console.log("Form has errors. Please correct them.");
     }
   };
 
