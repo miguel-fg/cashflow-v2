@@ -7,39 +7,39 @@ const getIconSource = (category) => {
   switch (category) {
     case "ATM":
       return require("../../assets/images/icons/atm.png");
-    case "Bills":
+    case "bills":
       return require("../../assets/images/icons/bills.png");
-    case "Hobby":
+    case "hobby":
       return require("../../assets/images/icons/crafts.png");
-    case "Dining Out":
+    case "dining out":
       return require("../../assets/images/icons/dining_out.png");
-    case "Education":
+    case "education":
       return require("../../assets/images/icons/education.png");
-    case "Entertainment":
+    case "entertainment":
       return require("../../assets/images/icons/entertainment.png");
-    case "Fitness":
+    case "fitness":
       return require("../../assets/images/icons/fitness.png");
-    case "Gifts":
+    case "gifts":
       return require("../../assets/images/icons/gift.png");
-    case "Groceries":
+    case "groceries":
       return require("../../assets/images/icons/groceries.png");
-    case "Health":
+    case "health":
       return require("../../assets/images/icons/health.png");
-    case "Paycheck":
+    case "paycheck":
       return require("../../assets/images/icons/paycheque.png");
-    case "Shopping":
+    case "shopping":
       return require("../../assets/images/icons/shopping.png");
-    case "Subscriptions":
+    case "subscriptions":
       return require("../../assets/images/icons/subscriptions.png");
-    case "Takeout":
+    case "takeout":
       return require("../../assets/images/icons/takeout.png");
-    case "Transport":
+    case "transport":
       return require("../../assets/images/icons/transport.png");
-    case "Travel":
+    case "travel":
       return require("../../assets/images/icons/travel.png");
-    case "Little Treat":
+    case "little treat":
       return require("../../assets/images/icons/treat.png");
-    case "Utilities":
+    case "utilities":
       return require("../../assets/images/icons/utilities.png");
     default:
       return require("../../assets/images/icons/misc.png");
@@ -55,10 +55,15 @@ const formatAmount = (amount, type) => {
   return `${sign}$${formattedAmount}`;
 };
 
+const capitalizeWords = (s) => {
+  return s.replace(/\b\w/g, (char) => char.toUpperCase());
+};
+
 const TransactionCard = (props) => {
   const iconSource = getIconSource(props.category);
   const amountColor = props.type === "Income" ? "#62A87C" : "#FE616F";
   const formattedAmount = formatAmount(props.amount, props.type);
+  const formattedCategory = capitalizeWords(props.category);
 
   return (
     <View style={styles.container}>
@@ -68,7 +73,7 @@ const TransactionCard = (props) => {
         </View>
         <View style={styles.data}>
           <StyledText type="text" weight="medium">
-            {props.category}
+            {formattedCategory}
           </StyledText>
           <StyledText type="label">{props.name}</StyledText>
         </View>

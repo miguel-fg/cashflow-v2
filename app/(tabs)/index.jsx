@@ -30,12 +30,27 @@ const Index = () => {
   };
 
   const closeModal = () => {
+    fetchTransactions();
     setIsModalVisible(false);
   };
 
-  const calculateIncome = () => {};
+  const calculateIncome = () => {
+    if (transactions) {
+      const income = transactions
+        .filter((transaction) => transaction.type === "Income")
+        .reduce((sum, transaction) => sum + parseFloat(transaction.amount), 0);
+      setTotalIncome(income);
+    }
+  };
 
-  const calculateExpenses = () => {};
+  const calculateExpenses = () => {
+    if (transactions) {
+      const expenses = transactions
+        .filter((transaction) => transaction.type === "Expense")
+        .reduce((sum, transaction) => sum + parseFloat(transaction.amount), 0);
+      setTotalExpenses(expenses);
+    }
+  };
 
   useEffect(() => {
     const fetchUserId = async () => {
@@ -62,23 +77,25 @@ const Index = () => {
     fetchUserId();
   }, []);
 
-  useEffect(() => {
-    const fetchTransactions = async () => {
-      if (currentAccount) {
-        try {
-          const db = await initDB();
-          const result = await db.getAllAsync(
-            "SELECT * FROM transactions WHERE account_id = ?",
-            [currentAccount.id],
-          );
+  const fetchTransactions = async () => {
+    if (currentAccount) {
+      try {
+        const db = await initDB();
+        const result = await db.getAllAsync(
+          "SELECT * FROM transactions WHERE account_id = ?",
+          [currentAccount.id],
+        );
 
-          setTransactions(result);
-        } catch (error) {
-          console.error("Failed to fetch transactions from database. ", error);
-        }
+        setTransactions(result);
+        calculateIncome();
+        calculateExpenses();
+      } catch (error) {
+        console.error("Failed to fetch transactions from database. ", error);
       }
-    };
+    }
+  };
 
+  useEffect(() => {
     fetchTransactions();
   }, [currentAccount]);
 
@@ -103,6 +120,7 @@ const Index = () => {
     <>
       <AddTransaction
         accountId={currentAccount.id}
+        currentAmount={currentAccount.amount}
         isEditing={false}
         isVisible={isModalVisible}
         onClose={closeModal}

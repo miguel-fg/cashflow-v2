@@ -69,8 +69,10 @@ const AddAccount = (props) => {
   };
 
   const formatAmount = () => {
-    const formattedInput = `$${rawAmount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
-    setFormattedAmount(formattedInput);
+    if (rawAmount) {
+      const formattedInput = `$${rawAmount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+      setFormattedAmount(formattedInput);
+    }
   };
 
   const validateForm = () => {

@@ -5,9 +5,17 @@ import StyledTextInput from "../shared/styledTextInput";
 import StyledDropdown from "../shared/styledDropdown";
 import TextButton from "../shared/textButton";
 import TypeRadioGroup from "./typeRadioGroup";
+import { initDB } from "../../db/database";
 
 const AddTransaction = (props) => {
-  const { accountId, isEditing, toEditTransaction, isVisible, onClose } = props;
+  const {
+    accountId,
+    currentAmount,
+    isEditing,
+    toEditTransaction,
+    isVisible,
+    onClose,
+  } = props;
   const [attempted, setAttempted] = useState(false);
   const [name, setName] = useState("");
   const [category, setCategory] = useState("misc");
@@ -144,15 +152,51 @@ const AddTransaction = (props) => {
     setIsFormValid(Object.keys(errors).length === 0);
   };
 
+  const updateAccountAmount = async () => {
+    const newAmount =
+      selectedType === "Income"
+        ? currentAmount + rawAmount
+        : currentAmount - rawAmount;
+    try {
+      const db = await initDB();
+      await db.runAsync("UPDATE accounts SET amount = ? WHERE id = ?", [
+        newAmount,
+        accountId,
+      ]);
+    } catch (error) {
+      console.error("Failed to update account amount.", error);
+    }
+  };
+
   const handleSubmit = async () => {
     setAttempted(true);
 
     if (isFormValid) {
-      console.log("Submitting form with values: ");
-      console.log("Name: ", name);
-      console.log("Category: ", category);
-      console.log("Amount: ", rawAmount);
-      console.log("Type: ", selectedType);
+      try {
+        const db = await initDB();
+
+        if (!isEditing) {
+          const date = new Date().toISOString();
+          await db.runAsync(
+            "INSERT INTO transactions (account_id, category, description, amount, type, date) VALUES (?, ?, ?, ?, ?, ?)",
+            [accountId, category, name, rawAmount, selectedType, date],
+          );
+
+          updateAccountAmount();
+
+          setName("");
+          setSelectedType("Expense");
+          setCategory("misc");
+          setRawAmount(0);
+          setFormattedAmount("");
+          setAttempted(false);
+          onClose();
+        } else {
+          console.log("Form is set to editing");
+        }
+      } catch (error) {
+        console.log("Failed to submit form.", error);
+      }
     } else {
       console.log("Form has errors. Please correct them.");
     }

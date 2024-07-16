@@ -56,6 +56,7 @@ const HappBarLayout = (props) => {
         setAccounts(result);
         if (result.length > 0) {
           setSelectedAccount(result[0]);
+          setCurrentAccount(result[0]);
           setSelectedLabel(result[0].name);
         }
       } catch (error) {
@@ -119,7 +120,9 @@ const HappBarLayout = (props) => {
         </View>
       )}
       <StyledText type="header" variant="light">
-        {formatAmount(selectedAccount.amount)}
+        {selectedAccount.amount
+          ? formatAmount(selectedAccount.amount)
+          : "No Account"}
       </StyledText>
       <View style={styles.accountData}>
         <View style={styles.dataContainer}>
