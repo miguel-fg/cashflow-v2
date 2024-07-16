@@ -30,6 +30,10 @@ const getIconSource = (icon) => {
   }
 };
 
+const capitalizeWords = (s) => {
+  return s.replace(/\b\w/g, (char) => char.toUpperCase());
+};
+
 const StyledDropdown = (props) => {
   const { data, icon, style, onSelect, item } = props;
   const [isOpen, setIsOpen] = useState(false);
@@ -39,8 +43,7 @@ const StyledDropdown = (props) => {
   const iconSource = getIconSource(icon);
 
   useEffect(() => {
-    const capitalize = (s) => s && s[0].toUpperCase() + s.slice(1);
-    setSelectedItem(capitalize(item));
+    setSelectedItem(capitalizeWords(item));
   }, [item]);
 
   const handleSelect = (item) => {
@@ -96,6 +99,7 @@ const StyledDropdown = (props) => {
                 <StyledText type="text">{item.label}</StyledText>
               </TouchableOpacity>
             )}
+            style={{ maxHeight: 200 }}
           />
         </View>
       )}

@@ -31,7 +31,7 @@ const AddTransaction = (props) => {
   const categoryEnum = [
     {
       label: "ATM",
-      value: "atm",
+      value: "ATM",
     },
     {
       label: "Bills",
@@ -95,7 +95,7 @@ const AddTransaction = (props) => {
     },
     {
       label: "Little Treat",
-      value: "little treate",
+      value: "little treat",
     },
     {
       label: "Utilities",
@@ -136,7 +136,7 @@ const AddTransaction = (props) => {
       errors.name = "Transaction description required.";
     }
 
-    if (!rawAmount) {
+    if (!rawAmount || rawAmount == 0) {
       errors.amount = "Amount cannot be zero.";
     }
 
