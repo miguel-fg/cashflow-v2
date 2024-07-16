@@ -4,6 +4,7 @@ import StyledText from "../shared/styledText";
 import StyledTextInput from "../shared/styledTextInput";
 import StyledDropdown from "../shared/styledDropdown";
 import TextButton from "../shared/textButton";
+import TypeRadioGroup from "./typeRadioGroup";
 
 const AddTransaction = (props) => {
   const { accountId, isEditing, toEditTransaction, isVisible, onClose } = props;
@@ -12,7 +13,7 @@ const AddTransaction = (props) => {
   const [category, setCategory] = useState("misc");
   const [rawAmount, setRawAmount] = useState(0);
   const [formattedAmount, setFormattedAmount] = useState("");
-  const [isIncome, setIsIncome] = useState(false);
+  const [selectedType, setSelectedType] = useState("Expense");
   const [isFormValid, setIsFormValid] = useState(false);
   const [errors, setErrors] = useState({});
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
@@ -22,7 +23,7 @@ const AddTransaction = (props) => {
       setName(toEditTransaction.name);
       setCategory(toEditTransaction.category);
       setRawAmount(toEditTransaction.amount);
-      setIsIncome(toEditTransaction.type);
+      setSelectedType(toEditTransaction.type);
       formatAmount();
     }
   }, [toEditTransaction, rawAmount]);
@@ -128,15 +129,38 @@ const AddTransaction = (props) => {
     setFormattedAmount(formattedInput);
   };
 
+  const validateForm = () => {
+    let errors = {};
+
+    if (!name) {
+      errors.name = "Transaction description required.";
+    }
+
+    if (!rawAmount) {
+      errors.amount = "Amount cannot be zero.";
+    }
+
+    setErrors(errors);
+    setIsFormValid(Object.keys(errors).length === 0);
+  };
+
   const handleSubmit = async () => {
     setAttempted(true);
 
     if (isFormValid) {
-      console.log("Submitting form!");
+      console.log("Submitting form with values: ");
+      console.log("Name: ", name);
+      console.log("Category: ", category);
+      console.log("Amount: ", rawAmount);
+      console.log("Type: ", selectedType);
     } else {
       console.log("Form has errors. Please correct them.");
     }
   };
+
+  useEffect(() => {
+    validateForm();
+  }, [name, rawAmount, attempted]);
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -193,7 +217,7 @@ const AddTransaction = (props) => {
             <StyledText type="text">Category</StyledText>
             <StyledDropdown
               data={categoryEnum}
-              icon="type"
+              icon="category"
               onSelect={handleSelectCategory}
               item={category}
             />
@@ -211,6 +235,14 @@ const AddTransaction = (props) => {
               onEndEditing={formatAmount}
               disabled={!isEditing}
             />
+            {attempted && errors.amount && (
+              <StyledText type="text" color="#FE616F">
+                {errors.amount}
+              </StyledText>
+            )}
+          </View>
+          <View style={styles.inputGroup}>
+            <TypeRadioGroup size={30} onValueChange={setSelectedType} />
           </View>
         </View>
         {!isKeyboardVisible && (

@@ -102,6 +102,7 @@ const Index = () => {
   return (
     <>
       <AddTransaction
+        accountId={currentAccount.id}
         isEditing={false}
         isVisible={isModalVisible}
         onClose={closeModal}
