@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
+  ActivityIndicator,
   SafeAreaView,
   StyleSheet,
   View,
-  ActivityIndicator,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import HomeAppBar from "../../components/home/HomeAppBar";
@@ -11,13 +11,11 @@ import StyledText from "../../components/shared/styledText";
 import AccountsList from "../../components/accounts/AccountsList";
 import AddNewButton from "../../components/shared/addNewButton";
 import AddAccount from "../../components/shared/addAccount";
-import { initDB } from "../../db/database";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AccountContext } from "../../context/accountsContext";
 
 const Accounts = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [userId, setUserId] = useState(null);
-  const [fetchFlag, setFetchFlag] = useState(false);
+  const { accounts, loading, fetchAccounts } = useContext(AccountContext);
 
   const handleAddNew = () => {
     setIsModalVisible(true);
@@ -25,46 +23,25 @@ const Accounts = () => {
 
   const closeModal = () => {
     setIsModalVisible(false);
-    setFetchFlag((prev) => !prev);
   };
 
   useEffect(() => {
-    const fetchUserId = async () => {
-      try {
-        const userData = await AsyncStorage.getItem("user");
-
-        if (userData) {
-          const user = JSON.parse(userData);
-          const db = await initDB();
-          const result = await db.getFirstAsync(
-            "SELECT * FROM users WHERE username = ?",
-            [user.name],
-          );
-
-          if (result) {
-            setUserId(result.id);
-          }
-        }
-      } catch (error) {
-        console.error("Failed to fetch user ID from database. ", error);
-      }
-    };
-
-    fetchUserId();
+    fetchAccounts();
   }, []);
 
-  if (userId === null) {
+  if (loading) {
     return (
-      <SafeAreaView style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#416788" />
-      </SafeAreaView>
+      <>
+        <SafeAreaView style={styles.container}>
+          <ActivityIndicator size="large" color="#416788" />
+        </SafeAreaView>
+      </>
     );
   }
 
   return (
     <>
       <AddAccount
-        userId={userId}
         isEditing={false}
         isVisible={isModalVisible}
         onClose={closeModal}
@@ -86,19 +63,13 @@ const Accounts = () => {
             <StyledText type="title">Banking</StyledText>
           </View>
           <AccountsList
-            userId={userId}
-            credit={0}
-            fetchFlag={fetchFlag}
-            setFetchFlag={setFetchFlag}
+            accounts={accounts.filter((account) => account.credit === 0)}
           />
           <View style={styles.titleContainer}>
             <StyledText type="title">Credit</StyledText>
           </View>
           <AccountsList
-            userId={userId}
-            credit={1}
-            fetchFlag={fetchFlag}
-            setFetchFlag={setFetchFlag}
+            accounts={accounts.filter((account) => account.credit === 1)}
           />
         </View>
         <View style={styles.bottomContainer}>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Modal, View, StyleSheet, StatusBar, Keyboard } from "react-native";
 import StyledText from "./styledText.jsx";
 import StyledTextInput from "./styledTextInput.jsx";
@@ -6,10 +6,11 @@ import StyledDropdown from "./styledDropdown.jsx";
 import StyledCheckbox from "./styledCheckbox.jsx";
 import TextButton from "./textButton.jsx";
 import { iso4217CurrencyCodes } from "../../constants/currencyCodes.js";
-import { initDB } from "../../db/database.js";
+import { AccountContext } from "../../context/accountsContext.jsx";
 
 const AddAccount = (props) => {
-  const { userId, isEditing, toEditAccount, isVisible, onClose } = props;
+  const { isEditing, toEditAccount, isVisible, onClose } = props;
+  const { addNewAccount, editExistingAccount } = useContext(AccountContext);
   const [attempted, setAttempted] = useState(false);
   const [name, setName] = useState("");
   const [type, setType] = useState("mastercard");
@@ -97,22 +98,30 @@ const AddAccount = (props) => {
 
     if (isFormValid) {
       try {
-        const db = await initDB();
         const creditValue = credit ? 1 : 0;
         const currencyValue = currency.toUpperCase();
         const typeValue = type.toLowerCase().trim();
 
+        let account;
+
         if (!isEditing) {
-          await db.runAsync(
-            "INSERT INTO accounts (user_id, name, currency, type, amount, credit) VALUES (?, ?, ?, ?, ?, ?)",
-            [userId, name, currencyValue, typeValue, rawAmount, creditValue],
-          );
+          account = {
+            name: name,
+            currency: currencyValue,
+            type: typeValue,
+            amount: rawAmount,
+            credit: creditValue,
+          };
+          await addNewAccount(account);
         } else {
-          const accountId = toEditAccount.id;
-          await db.runAsync(
-            "UPDATE accounts SET name = ?, currency = ?, type = ?, credit = ? WHERE user_id = ? AND id = ?",
-            [name, currencyValue, typeValue, creditValue, userId, accountId],
-          );
+          account = {
+            id: toEditAccount.id,
+            name: name,
+            currency: currencyValue,
+            type: typeValue,
+            credit: creditValue,
+          };
+          await editExistingAccount(account);
         }
         setName("");
         setType("mastercard");

@@ -104,6 +104,21 @@ const logTransactions = async () => {
   }
 };
 
+const getUserIdByUsername = async (username) => {
+  try {
+    const db = await initDB();
+    const result = await db.getFirstAsync(
+      "SELECT * FROM users WHERE username = ?",
+      [username],
+    );
+
+    return result.id;
+  } catch (error) {
+    console.error("Failed to fetch user ID. ERR: ", error);
+    throw error;
+  }
+};
+
 export {
   initDB,
   createTables,
@@ -111,4 +126,5 @@ export {
   logUsers,
   logAccounts,
   logTransactions,
+  getUserIdByUsername,
 };

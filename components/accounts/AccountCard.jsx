@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   View,
   StyleSheet,
@@ -9,8 +9,8 @@ import {
 } from "react-native";
 import StyledText from "../shared/styledText";
 import TextButton from "../shared/textButton";
-import { initDB } from "../../db/database";
 import AddAccount from "../shared/addAccount";
+import { AccountContext } from "../../context/accountsContext";
 
 const getIconSource = (type) => {
   switch (type) {
@@ -34,6 +34,7 @@ const formatAmount = (amount) => {
 const AccountCard = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [editingVisible, setEditingVisible] = useState(false);
+  const { removeAccount } = useContext(AccountContext);
   const iconSource = getIconSource(props.type);
   const formattedAmount = formatAmount(props.amount);
   const currentAccount = {
@@ -56,7 +57,6 @@ const AccountCard = (props) => {
 
   const closeEdit = () => {
     setEditingVisible(false);
-    props.setFetchFlag((prev) => !prev);
   };
 
   const handleDelete = () => {
@@ -73,19 +73,7 @@ const AccountCard = (props) => {
           text: "Delete",
           onPress: async () => {
             setModalVisible(false);
-            try {
-              const db = await initDB();
-              await db.runAsync(
-                "DELETE FROM transactions WHERE account_id = ?",
-                [props.accountId],
-              );
-              await db.runAsync("DELETE FROM accounts WHERE id = ?", [
-                props.accountId,
-              ]);
-              props.setFetchFlag((prev) => !prev);
-            } catch (error) {
-              console.error("Failed to delete account. ", error);
-            }
+            await removeAccount(props.accountId);
           },
         },
       ],
@@ -96,7 +84,6 @@ const AccountCard = (props) => {
   return (
     <TouchableOpacity onLongPress={handlePressAndHold} activeOpacity={0.5}>
       <AddAccount
-        userId={props.userId}
         isEditing={true}
         toEditAccount={currentAccount}
         isVisible={editingVisible}

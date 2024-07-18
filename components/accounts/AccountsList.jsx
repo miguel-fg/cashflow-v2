@@ -1,41 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { View, StyleSheet, FlatList, ActivityIndicator } from "react-native";
+import React from "react";
+import { View, FlatList } from "react-native";
 import AccountCard from "./AccountCard";
-import { initDB } from "../../db/database";
 
 const AccountsList = (props) => {
-  const { userId, credit, fetchFlag, setFetchFlag } = props;
-  const [accounts, setAccounts] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchAccounts = async () => {
-      try {
-        setLoading(true);
-        const db = await initDB();
-        const result = await db.getAllAsync(
-          "SELECT * FROM accounts WHERE user_id = ? AND credit = ?",
-          [userId, credit],
-        );
-
-        setAccounts(result);
-      } catch (error) {
-        console.error("Failed to fetch accounts ", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAccounts();
-  }, [fetchFlag]);
-
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="small" color="#416788" />
-      </View>
-    );
-  }
+  const { accounts } = props;
 
   if (accounts.length === 0) {
     return <></>;
@@ -49,14 +17,12 @@ const AccountsList = (props) => {
           renderItem={({ item }) => (
             <AccountCard
               key={item.id}
-              userId={userId}
               accountId={item.id}
               name={item.name}
               currency={item.currency}
               type={item.type}
               amount={item.amount}
               credit={item.credit}
-              setFetchFlag={setFetchFlag}
             />
           )}
         />
@@ -64,11 +30,5 @@ const AccountsList = (props) => {
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  loadingContainer: {
-    width: "100%",
-  },
-});
 
 export default AccountsList;
