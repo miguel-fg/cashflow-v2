@@ -11,6 +11,9 @@ const AddTransaction = (props) => {
   const {
     accountId,
     currentAmount,
+    currentIncome,
+    currentExpense,
+    fetchAccounts,
     isEditing,
     toEditTransaction,
     isVisible,
@@ -153,16 +156,24 @@ const AddTransaction = (props) => {
   };
 
   const updateAccountAmount = async () => {
-    const newAmount =
-      selectedType === "Income"
-        ? currentAmount + rawAmount
-        : currentAmount - rawAmount;
     try {
       const db = await initDB();
-      await db.runAsync("UPDATE accounts SET amount = ? WHERE id = ?", [
-        newAmount,
-        accountId,
-      ]);
+
+      if (selectedType === "Income") {
+        const newAmount = currentAmount + rawAmount;
+        const newIncome = currentIncome + rawAmount;
+        await db.runAsync(
+          "UPDATE accounts SET amount = ?, total_income = ? WHERE id = ?",
+          [newAmount, newIncome, accountId],
+        );
+      } else {
+        const newAmount = currentAmount - rawAmount;
+        const newExpense = currentExpense + rawAmount;
+        await db.runAsync(
+          "UPDATE accounts SET amount = ?, total_expense = ? WHERE id = ?",
+          [newAmount, newExpense, accountId],
+        );
+      }
     } catch (error) {
       console.error("Failed to update account amount.", error);
     }
@@ -183,6 +194,10 @@ const AddTransaction = (props) => {
           );
 
           updateAccountAmount();
+
+          if (fetchAccounts) {
+            fetchAccounts();
+          }
 
           setName("");
           setSelectedType("Expense");

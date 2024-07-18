@@ -11,8 +11,7 @@ import StyledText from "../shared/styledText";
 import { initDB } from "../../db/database";
 
 const HappBarLayout = (props) => {
-  const { userId, totalIncome, totalExpenses, setCurrentAccount, isFocused } =
-    props;
+  const { userId, setFetchAccounts, setCurrentAccount, isFocused } = props;
   const [isOpen, setIsOpen] = useState(false);
   const [selectedLabel, setSelectedLabel] = useState("");
   const [selectedAccount, setSelectedAccount] = useState({});
@@ -43,33 +42,52 @@ const HappBarLayout = (props) => {
     return `$${formattedAmount}`;
   };
 
-  useEffect(() => {
-    const fetchAccounts = async () => {
-      try {
-        setLoading(true);
-        const db = await initDB();
-        const result = await db.getAllAsync(
-          "SELECT * FROM accounts WHERE user_id = ?",
-          [userId],
+  const fetchAccounts = async () => {
+    try {
+      setLoading(true);
+      const db = await initDB();
+      const result = await db.getAllAsync(
+        "SELECT * FROM accounts WHERE user_id = ?",
+        [userId],
+      );
+
+      setAccounts(result);
+      if (result.length > 0) {
+        console.log(selectedAccount.id);
+        const prevSelectedAccount = result.find(
+          (account) => account.id === selectedAccount.id,
         );
 
-        setAccounts(result);
-        if (result.length > 0) {
+        console.log(prevSelectedAccount);
+
+        if (prevSelectedAccount) {
+          console.log("prev selected account! ");
+          setSelectedAccount(prevSelectedAccount);
+          setCurrentAccount(prevSelectedAccount);
+          setSelectedLabel(prevSelectedAccount.name);
+        } else {
+          console.log("setting account to index 0!");
           setSelectedAccount(result[0]);
           setCurrentAccount(result[0]);
           setSelectedLabel(result[0].name);
         }
-      } catch (error) {
-        console.error("Failed to fetch accounts from database. ", error);
-      } finally {
-        setLoading(false);
       }
-    };
+    } catch (error) {
+      console.error("Failed to fetch accounts from database. ", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     if (isFocused) {
       fetchAccounts();
     }
   }, [isFocused]);
+
+  useEffect(() => {
+    setFetchAccounts(() => fetchAccounts);
+  }, [setFetchAccounts]);
 
   if (loading) {
     return <></>;
@@ -120,7 +138,7 @@ const HappBarLayout = (props) => {
         </View>
       )}
       <StyledText type="header" variant="light">
-        {selectedAccount.amount
+        {!isNaN(selectedAccount.amount)
           ? formatAmount(selectedAccount.amount)
           : "No Account"}
       </StyledText>
@@ -132,7 +150,9 @@ const HappBarLayout = (props) => {
               Income
             </StyledText>
             <StyledText type="text" variant="light" weight="medium">
-              {formatAmount(totalIncome)}
+              {!isNaN(selectedAccount.amount)
+                ? formatAmount(selectedAccount.total_income)
+                : ""}
             </StyledText>
           </View>
         </View>
@@ -142,7 +162,9 @@ const HappBarLayout = (props) => {
               Expenses
             </StyledText>
             <StyledText type="text" variant="light" weight="medium">
-              {formatAmount(totalExpenses)}
+              {!isNaN(selectedAccount.amount)
+                ? formatAmount(selectedAccount.total_expense)
+                : ""}
             </StyledText>
           </View>
           <Ionicons name="chevron-down-circle" size={25} color="#FE616F" />

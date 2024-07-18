@@ -24,6 +24,7 @@ const Index = () => {
   const [transactions, setTransactions] = useState([]);
   const [totalIncome, setTotalIncome] = useState(0);
   const [totalExpenses, setTotalExpenses] = useState(0);
+  const [fetchAccounts, setFetchAccounts] = useState(null);
 
   const handleAddNew = () => {
     setIsModalVisible(true);
@@ -87,10 +88,11 @@ const Index = () => {
         );
 
         setTransactions(result);
-        calculateIncome();
-        calculateExpenses();
       } catch (error) {
         console.error("Failed to fetch transactions from database. ", error);
+      } finally {
+        calculateIncome();
+        calculateExpenses();
       }
     }
   };
@@ -121,6 +123,9 @@ const Index = () => {
       <AddTransaction
         accountId={currentAccount.id}
         currentAmount={currentAccount.amount}
+        currentIncome={currentAccount.total_income}
+        currentExpense={currentAccount.total_expense}
+        fetchAccounts={fetchAccounts}
         isEditing={false}
         isVisible={isModalVisible}
         onClose={closeModal}
@@ -131,8 +136,7 @@ const Index = () => {
           <View style={styles.appBarContainer}>
             <HappBarLayout
               userId={userId}
-              totalIncome={totalIncome}
-              totalExpenses={totalExpenses}
+              setFetchAccounts={setFetchAccounts}
               setCurrentAccount={setCurrentAccount}
               isFocused={isFocused}
             />
