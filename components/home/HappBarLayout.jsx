@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import {
   StyleSheet,
   View,
@@ -8,21 +8,25 @@ import {
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import StyledText from "../shared/styledText";
-import { initDB } from "../../db/database";
+import { AccountContext } from "../../context/accountsContext";
 
-const HappBarLayout = (props) => {
-  const { userId, setFetchAccounts, setCurrentAccount, isFocused } = props;
+const HappBarLayout = () => {
+  const {
+    accounts,
+    loading,
+    selectedAccount,
+    setSelectedAccount,
+    fetchAccounts,
+  } = useContext(AccountContext);
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedLabel, setSelectedLabel] = useState("");
-  const [selectedAccount, setSelectedAccount] = useState({});
-  const [accounts, setAccounts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [selectedLabel, setSelectedLabel] = useState(
+    selectedAccount ? selectedAccount.name : "",
+  );
   const [dropdownTop, setDropdownTop] = useState(0);
   const dropdownRef = useRef(null);
 
   const handleSelect = (item) => {
     setSelectedAccount(item);
-    setCurrentAccount(item); // parent component state
     setSelectedLabel(item.name);
     setIsOpen(false);
   };
@@ -42,52 +46,9 @@ const HappBarLayout = (props) => {
     return `$${formattedAmount}`;
   };
 
-  const fetchAccounts = async () => {
-    try {
-      setLoading(true);
-      const db = await initDB();
-      const result = await db.getAllAsync(
-        "SELECT * FROM accounts WHERE user_id = ?",
-        [userId],
-      );
-
-      setAccounts(result);
-      if (result.length > 0) {
-        console.log(selectedAccount.id);
-        const prevSelectedAccount = result.find(
-          (account) => account.id === selectedAccount.id,
-        );
-
-        console.log(prevSelectedAccount);
-
-        if (prevSelectedAccount) {
-          console.log("prev selected account! ");
-          setSelectedAccount(prevSelectedAccount);
-          setCurrentAccount(prevSelectedAccount);
-          setSelectedLabel(prevSelectedAccount.name);
-        } else {
-          console.log("setting account to index 0!");
-          setSelectedAccount(result[0]);
-          setCurrentAccount(result[0]);
-          setSelectedLabel(result[0].name);
-        }
-      }
-    } catch (error) {
-      console.error("Failed to fetch accounts from database. ", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    if (isFocused) {
-      fetchAccounts();
-    }
-  }, [isFocused]);
-
-  useEffect(() => {
-    setFetchAccounts(() => fetchAccounts);
-  }, [setFetchAccounts]);
+    fetchAccounts();
+  }, []);
 
   if (loading) {
     return <></>;
@@ -138,9 +99,7 @@ const HappBarLayout = (props) => {
         </View>
       )}
       <StyledText type="header" variant="light">
-        {!isNaN(selectedAccount.amount)
-          ? formatAmount(selectedAccount.amount)
-          : "No Account"}
+        {selectedAccount && formatAmount(selectedAccount.amount)}
       </StyledText>
       <View style={styles.accountData}>
         <View style={styles.dataContainer}>
@@ -150,9 +109,7 @@ const HappBarLayout = (props) => {
               Income
             </StyledText>
             <StyledText type="text" variant="light" weight="medium">
-              {!isNaN(selectedAccount.amount)
-                ? formatAmount(selectedAccount.total_income)
-                : ""}
+              {selectedAccount && formatAmount(selectedAccount.total_income)}
             </StyledText>
           </View>
         </View>
@@ -162,9 +119,7 @@ const HappBarLayout = (props) => {
               Expenses
             </StyledText>
             <StyledText type="text" variant="light" weight="medium">
-              {!isNaN(selectedAccount.amount)
-                ? formatAmount(selectedAccount.total_expense)
-                : ""}
+              {selectedAccount && formatAmount(selectedAccount.total_expense)}
             </StyledText>
           </View>
           <Ionicons name="chevron-down-circle" size={25} color="#FE616F" />

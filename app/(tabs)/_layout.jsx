@@ -8,6 +8,7 @@ import {
 } from "@expo-google-fonts/space-grotesk";
 import * as NavigationBar from "expo-navigation-bar";
 import { AccountProvider } from "../../context/accountsContext";
+import { TransactionProvider } from "../../context/transactionContext";
 
 const TabLayout = () => {
   const [fontsLoaded] = useFonts({
@@ -30,67 +31,69 @@ const TabLayout = () => {
 
   return (
     <AccountProvider>
-      <Tabs
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused, size }) => {
-            let iconName;
+      <TransactionProvider>
+        <Tabs
+          screenOptions={({ route }) => ({
+            tabBarIcon: ({ focused, size }) => {
+              let iconName;
 
-            if (route.name === "index") {
-              iconName = focused ? "home" : "home-outline";
-            } else if (route.name === "accounts") {
-              iconName = focused ? "wallet" : "wallet-outline";
-            } else if (route.name === "budgets") {
-              iconName = focused ? "pie-chart" : "pie-chart-outline";
-            } else if (route.name === "settings") {
-              iconName = focused ? "settings" : "settings-outline";
-            }
+              if (route.name === "index") {
+                iconName = focused ? "home" : "home-outline";
+              } else if (route.name === "accounts") {
+                iconName = focused ? "wallet" : "wallet-outline";
+              } else if (route.name === "budgets") {
+                iconName = focused ? "pie-chart" : "pie-chart-outline";
+              } else if (route.name === "settings") {
+                iconName = focused ? "settings" : "settings-outline";
+              }
 
-            return <Ionicons name={iconName} size={size} color={"#EEF0F2"} />;
-          },
-          tabBarStyle: {
-            backgroundColor: "#416788",
-            height: 90,
-            borderTopLeftRadius: 20,
-            borderTopRightRadius: 20,
-            padding: 10,
-          },
-          tabBarIconStyle: { color: "#EEF0F2", paddingBottom: 0 },
-          tabBarLabelStyle: {
-            color: "#EEF0F2",
-            paddingBottom: 15,
-            fontFamily: "SpaceGrotesk_400Regular",
-          },
-        })}
-      >
-        <Tabs.Screen
-          name="index"
-          options={{
-            title: "Home",
-            headerShown: false,
-          }}
-        />
-        <Tabs.Screen
-          name="accounts"
-          options={{
-            title: "Accounts",
-            headerShown: false,
-          }}
-        />
-        <Tabs.Screen
-          name="budgets"
-          options={{
-            title: "Budgets",
-            headerShown: false,
-          }}
-        />
-        <Tabs.Screen
-          name="settings"
-          options={{
-            title: "Settings",
-            headerShown: false,
-          }}
-        />
-      </Tabs>
+              return <Ionicons name={iconName} size={size} color={"#EEF0F2"} />;
+            },
+            tabBarStyle: {
+              backgroundColor: "#416788",
+              height: 90,
+              borderTopLeftRadius: 20,
+              borderTopRightRadius: 20,
+              padding: 10,
+            },
+            tabBarIconStyle: { color: "#EEF0F2", paddingBottom: 0 },
+            tabBarLabelStyle: {
+              color: "#EEF0F2",
+              paddingBottom: 15,
+              fontFamily: "SpaceGrotesk_400Regular",
+            },
+          })}
+        >
+          <Tabs.Screen
+            name="index"
+            options={{
+              title: "Home",
+              headerShown: false,
+            }}
+          />
+          <Tabs.Screen
+            name="accounts"
+            options={{
+              title: "Accounts",
+              headerShown: false,
+            }}
+          />
+          <Tabs.Screen
+            name="budgets"
+            options={{
+              title: "Budgets",
+              headerShown: false,
+            }}
+          />
+          <Tabs.Screen
+            name="settings"
+            options={{
+              title: "Settings",
+              headerShown: false,
+            }}
+          />
+        </Tabs>
+      </TransactionProvider>
     </AccountProvider>
   );
 };

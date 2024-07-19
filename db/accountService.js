@@ -83,7 +83,7 @@ const updateAccountAmount = async (accountId, transactionAmount, type) => {
   try {
     const db = await initDB();
     const accountInfo = await db.getFirstAsync(
-      "SELECT amount, total_income, total expense FROM accounts WHERE id = ?",
+      "SELECT amount, total_income, total_expense FROM accounts WHERE id = ?",
       [accountId],
     );
 

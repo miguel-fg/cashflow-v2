@@ -1,24 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Modal, View, StyleSheet, StatusBar, Keyboard } from "react-native";
 import StyledText from "../shared/styledText";
 import StyledTextInput from "../shared/styledTextInput";
 import StyledDropdown from "../shared/styledDropdown";
 import TextButton from "../shared/textButton";
 import TypeRadioGroup from "./typeRadioGroup";
-import { initDB } from "../../db/database";
+import { AccountContext } from "../../context/accountsContext";
+import { TransactionContext } from "../../context/transactionContext";
 
 const AddTransaction = (props) => {
-  const {
-    accountId,
-    currentAmount,
-    currentIncome,
-    currentExpense,
-    fetchAccounts,
-    isEditing,
-    toEditTransaction,
-    isVisible,
-    onClose,
-  } = props;
+  const { isEditing, toEditTransaction, isVisible, onClose } = props;
+  const { selectedAccount, updateByTransactionAmount } =
+    useContext(AccountContext);
+  const { addNewTransaction, editExistingTransaction } =
+    useContext(TransactionContext);
   const [attempted, setAttempted] = useState(false);
   const [name, setName] = useState("");
   const [category, setCategory] = useState("misc");
@@ -155,49 +150,29 @@ const AddTransaction = (props) => {
     setIsFormValid(Object.keys(errors).length === 0);
   };
 
-  const updateAccountAmount = async () => {
-    try {
-      const db = await initDB();
-
-      if (selectedType === "Income") {
-        const newAmount = currentAmount + rawAmount;
-        const newIncome = currentIncome + rawAmount;
-        await db.runAsync(
-          "UPDATE accounts SET amount = ?, total_income = ? WHERE id = ?",
-          [newAmount, newIncome, accountId],
-        );
-      } else {
-        const newAmount = currentAmount - rawAmount;
-        const newExpense = currentExpense + rawAmount;
-        await db.runAsync(
-          "UPDATE accounts SET amount = ?, total_expense = ? WHERE id = ?",
-          [newAmount, newExpense, accountId],
-        );
-      }
-    } catch (error) {
-      console.error("Failed to update account amount.", error);
-    }
-  };
-
   const handleSubmit = async () => {
     setAttempted(true);
 
     if (isFormValid) {
       try {
-        const db = await initDB();
-
+        let transaction;
         if (!isEditing) {
-          const date = new Date().toISOString();
-          await db.runAsync(
-            "INSERT INTO transactions (account_id, category, description, amount, type, date) VALUES (?, ?, ?, ?, ?, ?)",
-            [accountId, category, name, rawAmount, selectedType, date],
+          transaction = {
+            description: name,
+            category: category,
+            amount: rawAmount,
+            type: selectedType,
+            date: new Date().toISOString(),
+            account_id: selectedAccount.id,
+          };
+
+          await addNewTransaction(transaction);
+
+          await updateByTransactionAmount(
+            selectedAccount.id,
+            rawAmount,
+            selectedType,
           );
-
-          updateAccountAmount();
-
-          if (fetchAccounts) {
-            fetchAccounts();
-          }
 
           setName("");
           setSelectedType("Expense");
