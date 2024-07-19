@@ -2,7 +2,7 @@ import { initDB } from "./database";
 
 const getTransactions = async (accountId) => {
   try {
-    const db = initDB();
+    const db = await initDB();
     const result = await db.getAllAsync(
       "SELECT * FROM transactions WHERE account_id = ?",
       [accountId],
@@ -10,14 +10,28 @@ const getTransactions = async (accountId) => {
 
     return result;
   } catch (error) {
-    console.error("Failed to fetch transactions. ERR: ", error);
+    console.error("[Database] Failed to fetch transactions. ERR: ", error);
     throw error;
   }
 };
 
-const addTransaction = async (transaction) => {
+const getSingleTransaction = async (transactionId) => {
+  try {
+    const db = await initDB();
+    const result = await db.getFirstAsync(
+      "SELECT * FROM transactions WHERE id = ?",
+      [transactionId],
+    );
+
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to fetch transaction. ERR: ", error);
+    throw error;
+  }
+};
+
+const addTransaction = async (transaction, accountId) => {
   const {
-    account_id,
     category,
     description,
     amount,
@@ -26,15 +40,15 @@ const addTransaction = async (transaction) => {
   } = transaction;
 
   try {
-    const db = initDB();
+    const db = await initDB();
     const result = await db.runAsync(
       "INSERT INTO transactions (account_id, category, description, amount, type, date) VALUES (?, ?, ?, ?, ?, ?)",
-      [account_id, category, description, amount, type, date],
+      [accountId, category, description, amount, type, date],
     );
 
-    return result;
+    return { id: result.lastInsertRowId };
   } catch (error) {
-    console.log("Failed to insert transaction. ERR: ", error);
+    console.log("[Database] Failed to insert transaction. ERR: ", error);
     throw error;
   }
 };
@@ -43,31 +57,31 @@ const editTransaction = async (transaction) => {
   const { id, account_id, category, description, amount, type } = transaction;
 
   try {
-    const db = initDB();
-    const result = await db.runAsync(
+    const db = await initDB();
+    await db.runAsync(
       "UPDATE transactions SET category = ?, description = ?, amount = ?, type = ? WHERE id = ? AND account_id = ?",
       [category, description, amount, type, id, account_id],
     );
-
-    return result;
   } catch (error) {
-    console.log("Failed to update transaction. ERR: ", error);
+    console.log("[Database] Failed to update transaction. ERR: ", error);
     throw error;
   }
 };
 
 const deleteTransaction = async (transactionId) => {
   try {
-    const db = initDB();
-    const result = await db.runAsync("DELETE FROM transactions WHERE id = ?", [
-      transactionId,
-    ]);
-
-    return result;
+    const db = await initDB();
+    await db.runAsync("DELETE FROM transactions WHERE id = ?", [transactionId]);
   } catch (error) {
-    console.error("Failed to delete transaction. ERR: ", error);
+    console.error("[Database] Failed to delete transaction. ERR: ", error);
     throw error;
   }
 };
 
-export { getTransactions, addTransaction, editTransaction, deleteTransaction };
+export {
+  getTransactions,
+  getSingleTransaction,
+  addTransaction,
+  editTransaction,
+  deleteTransaction,
+};
