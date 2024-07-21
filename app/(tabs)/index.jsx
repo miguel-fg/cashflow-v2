@@ -13,6 +13,7 @@ import Transactions from "../../components/home/Transactions";
 import AddNewButton from "../../components/shared/addNewButton";
 import AddTransaction from "../../components/home/addTransaction";
 import { TransactionContext } from "../../context/transactionContext";
+import BalanceChart from "../../components/home/balanceChart";
 
 const Index = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -56,6 +57,10 @@ const Index = () => {
           </View>
         </HomeAppBar>
         <View style={styles.container} contentContainerStyle={styles.container}>
+          <View style={styles.transactionsContainer}>
+            <StyledText type="title">Summary</StyledText>
+          </View>
+          <BalanceChart />
           <View style={styles.transactionsContainer}>
             <StyledText type="title">Transactions</StyledText>
           </View>
