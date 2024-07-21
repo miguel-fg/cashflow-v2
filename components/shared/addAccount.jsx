@@ -31,7 +31,7 @@ const AddAccount = (props) => {
       setCredit(toEditAccount.credit === 1);
       formatAmount();
     }
-  }, [toEditAccount, rawAmount]);
+  }, [toEditAccount]);
 
   const typeEnum = [
     {

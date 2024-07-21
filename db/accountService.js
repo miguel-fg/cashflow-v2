@@ -109,6 +109,24 @@ const updateAccountAmount = async (accountId, transactionAmount, type) => {
   }
 };
 
+const updateAccountTotals = async (
+  accountId,
+  newAmount,
+  newIncome,
+  newExpense,
+) => {
+  try {
+    const db = await initDB();
+    await db.runAsync(
+      "UPDATE accounts SET amount = ?, total_income = ?, total_expense = ? WHERE id = ?",
+      [newAmount, newIncome, newExpense, accountId],
+    );
+  } catch (error) {
+    console.error("[Database] Failed to update account totals. ERR: ", error);
+    throw error;
+  }
+};
+
 const deleteAccount = async (accountId) => {
   try {
     const db = await initDB();
@@ -129,5 +147,6 @@ export {
   addAccount,
   editAccount,
   updateAccountAmount,
+  updateAccountTotals,
   deleteAccount,
 };

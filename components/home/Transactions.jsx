@@ -12,10 +12,12 @@ const Transactions = (props) => {
         renderItem={({ item }) => (
           <TransactionCard
             key={item.id}
+            transactionId={item.id}
             name={item.description}
             category={item.category}
             type={item.type}
             amount={item.amount}
+            date={item.date}
           />
         )}
       />

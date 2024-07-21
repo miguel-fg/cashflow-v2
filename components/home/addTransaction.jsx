@@ -10,7 +10,7 @@ import { TransactionContext } from "../../context/transactionContext";
 
 const AddTransaction = (props) => {
   const { isEditing, toEditTransaction, isVisible, onClose } = props;
-  const { selectedAccount, updateByTransactionAmount } =
+  const { selectedAccount, updateByTransactionAmount, updateTotalsOnEdit } =
     useContext(AccountContext);
   const { addNewTransaction, editExistingTransaction } =
     useContext(TransactionContext);
@@ -26,13 +26,13 @@ const AddTransaction = (props) => {
 
   useEffect(() => {
     if (toEditTransaction) {
-      setName(toEditTransaction.name);
+      setName(toEditTransaction.description);
       setCategory(toEditTransaction.category);
       setRawAmount(toEditTransaction.amount);
       setSelectedType(toEditTransaction.type);
       formatAmount();
     }
-  }, [toEditTransaction, rawAmount]);
+  }, [toEditTransaction]);
 
   const categoryEnum = [
     {
@@ -131,8 +131,10 @@ const AddTransaction = (props) => {
   };
 
   const formatAmount = () => {
-    const formattedInput = `$${rawAmount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
-    setFormattedAmount(formattedInput);
+    if (rawAmount) {
+      const formattedInput = `$${rawAmount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+      setFormattedAmount(formattedInput);
+    }
   };
 
   const validateForm = () => {
@@ -173,17 +175,32 @@ const AddTransaction = (props) => {
             rawAmount,
             selectedType,
           );
-
-          setName("");
-          setSelectedType("Expense");
-          setCategory("misc");
-          setRawAmount(0);
-          setFormattedAmount("");
-          setAttempted(false);
-          onClose();
         } else {
-          console.log("Form is set to editing");
+          transaction = {
+            id: toEditTransaction.id,
+            description: name,
+            category: category,
+            amount: rawAmount,
+            type: selectedType,
+          };
+
+          await editExistingTransaction(transaction);
+
+          await updateTotalsOnEdit(
+            selectedAccount.id,
+            toEditTransaction.amount,
+            toEditTransaction.type,
+            rawAmount,
+            selectedType,
+          );
         }
+        setName("");
+        setSelectedType("Expense");
+        setCategory("misc");
+        setRawAmount(0);
+        setFormattedAmount("");
+        setAttempted(false);
+        onClose();
       } catch (error) {
         console.log("Failed to submit form.", error);
       }
@@ -267,7 +284,6 @@ const AddTransaction = (props) => {
               keyboardType="numeric"
               inputMode="numeric"
               onEndEditing={formatAmount}
-              disabled={!isEditing}
             />
             {attempted && errors.amount && (
               <StyledText type="text" color="#FE616F">
@@ -276,7 +292,11 @@ const AddTransaction = (props) => {
             )}
           </View>
           <View style={styles.inputGroup}>
-            <TypeRadioGroup size={30} onValueChange={setSelectedType} />
+            <TypeRadioGroup
+              size={30}
+              selectedType={selectedType}
+              onValueChange={setSelectedType}
+            />
           </View>
         </View>
         {!isKeyboardVisible && (

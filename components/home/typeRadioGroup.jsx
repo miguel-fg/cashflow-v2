@@ -4,8 +4,10 @@ import StyledText from "../shared/styledText";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 const TypeRadioGroup = (props) => {
-  const { size, onValueChange } = props;
-  const [selectedValue, setSelectedValue] = useState("Expense");
+  const { size, selectedType, onValueChange } = props;
+  const [selectedValue, setSelectedValue] = useState(
+    selectedType ? selectedType : "Expense",
+  );
 
   const handleToggle = (value) => {
     setSelectedValue(value);

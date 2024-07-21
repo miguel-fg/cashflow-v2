@@ -54,13 +54,13 @@ const addTransaction = async (transaction, accountId) => {
 };
 
 const editTransaction = async (transaction) => {
-  const { id, account_id, category, description, amount, type } = transaction;
+  const { id, category, description, amount, type } = transaction;
 
   try {
     const db = await initDB();
     await db.runAsync(
-      "UPDATE transactions SET category = ?, description = ?, amount = ?, type = ? WHERE id = ? AND account_id = ?",
-      [category, description, amount, type, id, account_id],
+      "UPDATE transactions SET category = ?, description = ?, amount = ?, type = ? WHERE id = ?",
+      [category, description, amount, type, id],
     );
   } catch (error) {
     console.log("[Database] Failed to update transaction. ERR: ", error);
