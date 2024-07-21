@@ -4,7 +4,7 @@ const getTransactions = async (accountId) => {
   try {
     const db = await initDB();
     const result = await db.getAllAsync(
-      "SELECT * FROM transactions WHERE account_id = ?",
+      "SELECT * FROM transactions WHERE account_id = ? ORDER BY id DESC",
       [accountId],
     );
 
