@@ -1,52 +1,121 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Modal, View, StyleSheet, StatusBar, Keyboard } from "react-native";
-import StyledText from "./styledText.jsx";
-import StyledTextInput from "./styledTextInput.jsx";
-import StyledDropdown from "./styledDropdown.jsx";
-import StyledCheckbox from "./styledCheckbox.jsx";
-import TextButton from "./textButton.jsx";
-import { iso4217CurrencyCodes } from "../../constants/currencyCodes.js";
-import { AccountContext } from "../../context/accountsContext.jsx";
+import StyledText from "../shared/styledText";
+import StyledTextInput from "../shared/styledTextInput";
+import StyledDropdown from "../shared/styledDropdown";
+import TextButton from "../shared/textButton";
+import TypeRadioGroup from "./typeRadioGroup";
+import { AccountContext } from "../../context/accountsContext";
+import { TransactionContext } from "../../context/transactionContext";
 
-const AddAccount = (props) => {
-  const { isEditing, toEditAccount, isVisible, onClose } = props;
-  const { addNewAccount, editExistingAccount } = useContext(AccountContext);
+const AddTransaction = (props) => {
+  const { isEditing, toEditTransaction, isVisible, onClose } = props;
+  const { selectedAccount, updateByTransactionAmount, updateTotalsOnEdit } =
+    useContext(AccountContext);
+  const { addNewTransaction, editExistingTransaction } =
+    useContext(TransactionContext);
   const [attempted, setAttempted] = useState(false);
   const [name, setName] = useState("");
-  const [type, setType] = useState("mastercard");
-  const [credit, setCredit] = useState(false);
-  const [formattedAmount, setFormattedAmount] = useState("");
+  const [category, setCategory] = useState("misc");
   const [rawAmount, setRawAmount] = useState(0);
-  const [currency, setCurrency] = useState("");
+  const [formattedAmount, setFormattedAmount] = useState("");
+  const [selectedType, setSelectedType] = useState("Expense");
   const [isFormValid, setIsFormValid] = useState(false);
   const [errors, setErrors] = useState({});
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
   useEffect(() => {
-    if (toEditAccount) {
-      setName(toEditAccount.name);
-      setType(toEditAccount.type);
-      setRawAmount(toEditAccount.amount);
-      setCurrency(toEditAccount.currency);
-      setCredit(toEditAccount.credit === 1);
+    if (toEditTransaction) {
+      setName(toEditTransaction.description);
+      setCategory(toEditTransaction.category);
+      setRawAmount(toEditTransaction.amount);
+      setSelectedType(toEditTransaction.type);
       formatAmount();
     }
-  }, [toEditAccount]);
+  }, [toEditTransaction]);
 
-  const typeEnum = [
+  const categoryEnum = [
     {
-      label: "Mastercard",
-      value: "mastercard",
+      label: "ATM",
+      value: "ATM",
     },
     {
-      label: "Visa",
-      value: "visa",
+      label: "Bills",
+      value: "bills",
     },
     {
-      label: "Other",
-      value: "other",
+      label: "Hobby",
+      value: "hobby",
+    },
+    {
+      label: "Dining Out",
+      value: "dining out",
+    },
+    {
+      label: "Education",
+      value: "education",
+    },
+    {
+      label: "Entertainment",
+      value: "entertainment",
+    },
+    {
+      label: "Fitness",
+      value: "fitness",
+    },
+    {
+      label: "Gifts",
+      value: "gifts",
+    },
+    {
+      label: "Groceries",
+      value: "groceries",
+    },
+    {
+      label: "Health",
+      value: "health",
+    },
+    {
+      label: "Paycheck",
+      value: "paycheck",
+    },
+    {
+      label: "Shopping",
+      value: "shopping",
+    },
+    {
+      label: "Subscriptions",
+      value: "subscriptions",
+    },
+    {
+      label: "Takeout",
+      value: "takeout",
+    },
+    {
+      label: "Transport",
+      value: "transport",
+    },
+    {
+      label: "Travel",
+      value: "travel",
+    },
+    {
+      label: "Little Treat",
+      value: "little treat",
+    },
+    {
+      label: "Utilities",
+      value: "utilities",
+    },
+    {
+      label: "Misc",
+      value: "misc",
     },
   ];
+
+  const handleSelectCategory = (value) => {
+    setCategory(value);
+  };
 
   const handleAmountChange = (input) => {
     let cleanedInput = input.replace(/[^0-9.]/g, "");
@@ -61,14 +130,6 @@ const AddAccount = (props) => {
     setFormattedAmount(input);
   };
 
-  const handleSelectType = (value) => {
-    setType(value);
-  };
-
-  const handleCheckboxToggle = (isChecked) => {
-    setCredit(isChecked);
-  };
-
   const formatAmount = () => {
     if (rawAmount) {
       const formattedInput = `$${rawAmount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
@@ -80,13 +141,11 @@ const AddAccount = (props) => {
     let errors = {};
 
     if (!name) {
-      errors.name = "Account name required.";
+      errors.name = "Transaction description required.";
     }
 
-    if (!currency) {
-      errors.currency = "Currency required.";
-    } else if (!iso4217CurrencyCodes.includes(currency.toUpperCase())) {
-      errors.currency = "Invalid currency code.";
+    if (!rawAmount || rawAmount == 0) {
+      errors.amount = "Amount cannot be zero.";
     }
 
     setErrors(errors);
@@ -98,37 +157,48 @@ const AddAccount = (props) => {
 
     if (isFormValid) {
       try {
-        const creditValue = credit ? 1 : 0;
-        const currencyValue = currency.toUpperCase();
-        const typeValue = type.toLowerCase().trim();
-
-        let account;
-
+        let transaction;
         if (!isEditing) {
-          account = {
-            name: name,
-            currency: currencyValue,
-            type: typeValue,
+          transaction = {
+            description: name,
+            category: category,
             amount: rawAmount,
-            credit: creditValue,
+            type: selectedType,
+            date: new Date().toISOString(),
+            account_id: selectedAccount.id,
           };
-          await addNewAccount(account);
+
+          await addNewTransaction(transaction);
+
+          await updateByTransactionAmount(
+            selectedAccount.id,
+            rawAmount,
+            selectedType,
+          );
         } else {
-          account = {
-            id: toEditAccount.id,
-            name: name,
-            currency: currencyValue,
-            type: typeValue,
-            credit: creditValue,
+          transaction = {
+            id: toEditTransaction.id,
+            description: name,
+            category: category,
+            amount: rawAmount,
+            type: selectedType,
           };
-          await editExistingAccount(account);
+
+          await editExistingTransaction(transaction);
+
+          await updateTotalsOnEdit(
+            selectedAccount.id,
+            toEditTransaction.amount,
+            toEditTransaction.type,
+            rawAmount,
+            selectedType,
+          );
         }
         setName("");
-        setType("mastercard");
-        setCredit(false);
-        setFormattedAmount("$0.00");
+        setSelectedType("Expense");
+        setCategory("misc");
         setRawAmount(0);
-        setCurrency("");
+        setFormattedAmount("");
         setAttempted(false);
         onClose();
       } catch (error) {
@@ -141,7 +211,7 @@ const AddAccount = (props) => {
 
   useEffect(() => {
     validateForm();
-  }, [name, type, currency, attempted]);
+  }, [name, rawAmount, attempted]);
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -170,18 +240,20 @@ const AddAccount = (props) => {
       <View style={styles.modalContainer}>
         <View style={styles.titleContainer}>
           <StyledText type="header">
-            {isEditing ? "Edit" : "New"} Account
+            {isEditing ? "Edit" : "New"} Transaction
           </StyledText>
         </View>
         {!isEditing && (
-          <StyledText type="title">Add details of your new account.</StyledText>
+          <StyledText type="title">
+            Add details of your new transaction.
+          </StyledText>
         )}
         <View style={styles.inputContainer}>
           <View style={styles.inputGroup}>
-            <StyledText type="text">Name</StyledText>
+            <StyledText type="text">Description</StyledText>
             <StyledTextInput
               icon="description"
-              placeholder="TD Checking"
+              placeholder="Levi's jacket"
               password={false}
               text={name}
               setText={setName}
@@ -192,33 +264,17 @@ const AddAccount = (props) => {
               </StyledText>
             )}
           </View>
-          <View style={styles.typeContainer}>
-            <View style={styles.inputGroup}>
-              <StyledText type="text" style={styles.inputLabel}>
-                Account Type
-              </StyledText>
-              <StyledDropdown
-                data={typeEnum}
-                icon="type"
-                onSelect={handleSelectType}
-                item={type}
-              />
-            </View>
-            <View style={styles.creditContainer}>
-              <StyledText type="text" style={styles.inputLabel}>
-                Credit
-              </StyledText>
-              <StyledCheckbox
-                size={30}
-                isChecked={credit}
-                onToggle={handleCheckboxToggle}
-              />
-            </View>
+          <View style={styles.inputGroup}>
+            <StyledText type="text">Category</StyledText>
+            <StyledDropdown
+              data={categoryEnum}
+              icon="category"
+              onSelect={handleSelectCategory}
+              item={category}
+            />
           </View>
           <View style={styles.inputGroup}>
-            <StyledText type="text">
-              {credit ? "Current Limit" : "Current Amount"}
-            </StyledText>
+            <StyledText type="text">Amount</StyledText>
             <StyledTextInput
               icon="amount"
               password={false}
@@ -228,28 +284,19 @@ const AddAccount = (props) => {
               keyboardType="numeric"
               inputMode="numeric"
               onEndEditing={formatAmount}
-              disabled={!isEditing}
             />
-            {isEditing && (
-              <StyledText type="text">
-                Account {credit ? "limit" : "budget"} cannot be changed.
+            {attempted && errors.amount && (
+              <StyledText type="text" color="#FE616F">
+                {errors.amount}
               </StyledText>
             )}
           </View>
           <View style={styles.inputGroup}>
-            <StyledText type="text">Currency</StyledText>
-            <StyledTextInput
-              icon="currency"
-              placeholder="CAD"
-              password={false}
-              text={currency}
-              setText={setCurrency}
+            <TypeRadioGroup
+              size={30}
+              selectedType={selectedType}
+              onValueChange={setSelectedType}
             />
-            {attempted && errors.currency && (
-              <StyledText type="text" color="#FE616F">
-                {errors.currency}
-              </StyledText>
-            )}
           </View>
         </View>
         {!isKeyboardVisible && (
@@ -293,19 +340,6 @@ const styles = StyleSheet.create({
   },
   inputGroup: {
     marginTop: 10,
-    flexGrow: 1,
-    flexBasis: "auto",
-  },
-  creditContainer: {
-    marginTop: 10,
-    marginLeft: 10,
-    alignItems: "flex-end",
-  },
-  typeContainer: {
-    flex: -1,
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-between",
   },
   inputContainer: {
     width: "80%",
@@ -328,4 +362,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddAccount;
+export default AddTransaction;

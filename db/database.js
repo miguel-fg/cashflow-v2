@@ -28,6 +28,8 @@ const createTables = async () => {
         currency TEXT NOT NULL,
         type TEXT,
         amount REAL DEFAULT 0,
+        total_income REAL DEFAULT 0,
+        total_expense REAL DEFAULT 0,
         credit BOOLEAN DEFAULT 0,
         FOREIGN KEY (user_id) REFERENCES users(id)
       );
@@ -49,14 +51,15 @@ const createTables = async () => {
   }
 };
 
+// DANGER ZONE
 const dropTables = async () => {
   try {
     const db = await initDB();
 
     await db.execAsync(`
-      DROP TABLE IF EXISTS users;
-      DROP TABLE IF EXISTS accounts;
       DROP TABLE IF EXISTS transactions;
+      DROP TABLE IF EXISTS accounts;
+      DROP TABLE IF EXISTS users;
     `);
 
     console.log("CF_SQLite Tables Dropped.");
@@ -70,7 +73,7 @@ const logUsers = async () => {
     const db = await initDB();
     const results = await db.getAllAsync(`SELECT * FROM users`);
     for (const row of results) {
-      console.log(row.id, row.username, row.email, row.password, row.salt);
+      console.log(row);
     }
   } catch (error) {
     console.error(`Failed to log contents of users`, error);
@@ -82,18 +85,46 @@ const logAccounts = async () => {
     const db = await initDB();
     const results = await db.getAllAsync(`SELECT * FROM accounts`);
     for (const row of results) {
-      console.log(
-        row.id,
-        row.user_id,
-        row.currency,
-        row.credit,
-        row.type,
-        row.amount,
-      );
+      console.log(row);
     }
   } catch (error) {
     console.error("Failed to log contents of accounts", error);
   }
 };
 
-export { initDB, createTables, dropTables, logUsers, logAccounts };
+const logTransactions = async () => {
+  try {
+    const db = await initDB();
+    const results = await db.getAllAsync(`SELECT * FROM transactions`);
+    for (const row of results) {
+      console.log(row);
+    }
+  } catch (error) {
+    console.error("Failed to log contents of transactions", error);
+  }
+};
+
+const getUserIdByUsername = async (username) => {
+  try {
+    const db = await initDB();
+    const result = await db.getFirstAsync(
+      "SELECT * FROM users WHERE username = ?",
+      [username],
+    );
+
+    return result.id;
+  } catch (error) {
+    console.error("Failed to fetch user ID. ERR: ", error);
+    throw error;
+  }
+};
+
+export {
+  initDB,
+  createTables,
+  dropTables,
+  logUsers,
+  logAccounts,
+  logTransactions,
+  getUserIdByUsername,
+};
