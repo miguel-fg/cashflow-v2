@@ -11,26 +11,22 @@ const BalanceChart = () => {
   const [data, setData] = useState({});
   const screenWidth = Dimensions.get("window").width;
 
-  const dataOld = {
-    labels: ["January", "February", "March", "April", "May", "June"],
-    datasets: [
-      {
-        data: [20, 45, 28, 80, 99, 43],
-        color: (opacity = 1) => `rgba(65, 103, 136, ${opacity})`,
-        strokeWidth: 2,
-      },
-    ],
-  };
-
   const chartConfig = {
     backgroundGradientFrom: "#EEF0F2",
     backgroundGradientFromOpacity: 1,
     backgroundGradientTo: "#EEF0F2",
     backgroundGradientToOpacity: 1,
     color: (opacity = 1) => `rgba(65, 103, 136, ${opacity})`,
-    strokeWidth: 2, // optional, default 3
-    barPercentage: 0.5,
-    useShadowColorFromDataset: false, // optional
+    labelColor: (opacity = 1) => `rgba(8, 14, 33, ${opacity})`,
+  };
+
+  const formatYLabel = (value) => {
+    const num = Number(value);
+    if (num >= 1000) {
+      return (num / 1000).toFixed(2) + "k";
+    }
+
+    return num.toFixed(1).toString();
   };
 
   useEffect(() => {
@@ -44,11 +40,13 @@ const BalanceChart = () => {
       {data.datasets && (
         <LineChart
           data={data}
-          width={screenWidth - 20}
+          width={screenWidth - 5}
           height={170}
           chartConfig={chartConfig}
           bezier
-          withInnerLines={false}
+          withHorizontalLines={true}
+          withVerticalLines={false}
+          formatYLabel={formatYLabel}
         />
       )}
     </View>
