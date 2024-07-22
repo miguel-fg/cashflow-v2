@@ -12,6 +12,7 @@ import AccountsList from "../../components/accounts/AccountsList";
 import AddNewButton from "../../components/shared/addNewButton";
 import AddAccount from "../../components/shared/addAccount";
 import { AccountContext } from "../../context/accountsContext";
+import AddNewCard from "../../components/shared/addNewCard";
 
 const Accounts = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -59,6 +60,11 @@ const Accounts = () => {
           styles={styles.container}
           contentContainerStyle={styles.container}
         >
+          <AddNewCard
+            onPress={handleAddNew}
+            toAdd="Account"
+            style={{ marginTop: 10 }}
+          />
           <View style={styles.titleContainer}>
             <StyledText type="title">Banking</StyledText>
           </View>
@@ -71,9 +77,6 @@ const Accounts = () => {
           <AccountsList
             accounts={accounts.filter((account) => account.credit === 1)}
           />
-        </View>
-        <View style={styles.bottomContainer}>
-          <AddNewButton style={styles.buttonSize} onPress={handleAddNew} />
         </View>
       </SafeAreaView>
     </>
@@ -97,17 +100,8 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     alignItems: "center",
-    marginTop: 20,
-    marginBottom: 15,
-  },
-  bottomContainer: {
-    flex: 1,
-    alignItems: "center",
-    flexDirection: "column-reverse",
+    marginTop: 10,
     marginBottom: 10,
-  },
-  buttonSize: {
-    width: "80%",
   },
 });
 
