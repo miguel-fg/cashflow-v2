@@ -15,6 +15,7 @@ const TabLayout = () => {
     SpaceGrotesk_400Regular,
   });
   NavigationBar.setVisibilityAsync("hidden");
+  NavigationBar.setBackgroundColorAsync("#416788");
 
   useEffect(() => {
     async function prepare() {

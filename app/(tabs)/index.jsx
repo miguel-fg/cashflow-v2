@@ -10,7 +10,6 @@ import HomeAppBar from "../../components/home/HomeAppBar";
 import StyledText from "../../components/shared/styledText";
 import HappBarLayout from "../../components/home/HappBarLayout";
 import Transactions from "../../components/home/Transactions";
-import AddNewButton from "../../components/shared/addNewButton";
 import AddTransaction from "../../components/home/addTransaction";
 import { TransactionContext } from "../../context/transactionContext";
 import BalanceChart from "../../components/home/balanceChart";

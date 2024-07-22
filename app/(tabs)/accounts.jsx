@@ -9,7 +9,6 @@ import { StatusBar } from "expo-status-bar";
 import HomeAppBar from "../../components/home/HomeAppBar";
 import StyledText from "../../components/shared/styledText";
 import AccountsList from "../../components/accounts/AccountsList";
-import AddNewButton from "../../components/shared/addNewButton";
 import AddAccount from "../../components/shared/addAccount";
 import { AccountContext } from "../../context/accountsContext";
 import AddNewCard from "../../components/shared/addNewCard";
