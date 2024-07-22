@@ -1,19 +1,43 @@
-import { View } from 'react-native'
-
-import StyledText from '../../components/shared/styledText'
+import React from "react";
+import { SafeAreaView, StyleSheet, View } from "react-native";
+import { StatusBar } from "expo-status-bar";
+import StyledText from "../../components/shared/styledText";
+import HappBarLayout from "../../components/home/HappBarLayout";
+import HomeAppBar from "../../components/home/HomeAppBar";
 
 const Budgets = () => {
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
-      <StyledText type='header'>Budgets page</StyledText>
-    </View>
-  )
-}
+    <>
+      <StatusBar style="light" translucent={true} />
+      <SafeAreaView style={styles.container}>
+        <HomeAppBar>
+          <View style={styles.appBarContainer}>
+            <HappBarLayout />
+          </View>
+        </HomeAppBar>
+        <View style={styles.container} contentContainerStyle={styles.container}>
+          <View style={styles.titleContainer}>
+            <StyledText type="title">Category Breakdown</StyledText>
+          </View>
+        </View>
+      </SafeAreaView>
+    </>
+  );
+};
 
-export default Budgets
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#EEF0F2",
+  },
+  appBarContainer: {
+    alignItems: "center",
+  },
+  titleContainer: {
+    alignItems: "center",
+    marginTop: 10,
+    marginBottom: 10,
+  },
+});
+
+export default Budgets;
