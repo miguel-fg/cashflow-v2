@@ -4,6 +4,7 @@ import { StatusBar } from "expo-status-bar";
 import StyledText from "../../components/shared/styledText";
 import HappBarLayout from "../../components/home/HappBarLayout";
 import HomeAppBar from "../../components/home/HomeAppBar";
+import CategoryChart from "../../components/budgets/categoryChart";
 
 const Budgets = () => {
   return (
@@ -18,6 +19,10 @@ const Budgets = () => {
         <View style={styles.container} contentContainerStyle={styles.container}>
           <View style={styles.titleContainer}>
             <StyledText type="title">Category Breakdown</StyledText>
+          </View>
+          <CategoryChart />
+          <View style={styles.titleContainer}>
+            <StyledText type="title">Your Budgets</StyledText>
           </View>
         </View>
       </SafeAreaView>
