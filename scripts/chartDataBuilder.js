@@ -57,7 +57,15 @@ const categoryDataBuilder = (transactions) => {
   });
 
   const data = [];
-  const colors = ["#416788", "#FE616F", "#62A87C", "#E6F14A", "#FFB100"];
+  const colors = [
+    "#416788",
+    "#F46036",
+    "#62A87C",
+    "#FF82A9",
+    "#FFB100",
+    "#FE616F",
+    "#88CCF1",
+  ];
   let colorIndex = 0;
 
   categoryMap.forEach((amount, category) => {

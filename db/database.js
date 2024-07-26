@@ -43,6 +43,14 @@ const createTables = async () => {
         date TEXT,
         FOREIGN KEY (account_id) REFERENCES accounts(id)
       );
+      CREATE TABLE IF NOT EXISTS budgets (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        account_id INTEGER,
+        category TEXT,
+        limit_amount REAL,
+        current_amount REAL,
+        FOREIGN KEY (account_id) REFERENCES accounts(id)
+      );
     `);
 
     console.log("CF_SQLite Database Connected!");
@@ -58,6 +66,7 @@ const dropTables = async () => {
 
     await db.execAsync(`
       DROP TABLE IF EXISTS transactions;
+      DROP TABLE IF EXISTS budgets;
       DROP TABLE IF EXISTS accounts;
       DROP TABLE IF EXISTS users;
     `);
@@ -104,6 +113,18 @@ const logTransactions = async () => {
   }
 };
 
+const logBudgets = async () => {
+  try {
+    const db = await initDB();
+    const results = await db.getAllAsync(`SELECT * FROM budgets`);
+    for (const row of results) {
+      console.log(row);
+    }
+  } catch (error) {
+    console.error("Failed to log contents of budgets", error);
+  }
+};
+
 const getUserIdByUsername = async (username) => {
   try {
     const db = await initDB();
@@ -126,5 +147,6 @@ export {
   logUsers,
   logAccounts,
   logTransactions,
+  logBudgets,
   getUserIdByUsername,
 };
