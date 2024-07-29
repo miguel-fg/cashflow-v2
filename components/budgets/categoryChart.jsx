@@ -6,7 +6,7 @@ import { categoryDataBuilder } from "../../scripts/chartDataBuilder";
 
 const CategoryChart = () => {
   const [data, setData] = useState([]);
-  const { transactions } = useContext(TransactionContext);
+  const { transactions, loading } = useContext(TransactionContext);
   const screenWidth = Dimensions.get("window").width;
 
   const chartConfig = {
@@ -19,14 +19,14 @@ const CategoryChart = () => {
   };
 
   useEffect(() => {
-    if (transactions.length > 0) {
+    if (!loading) {
       setData(categoryDataBuilder(transactions));
     }
   }, [transactions]);
 
   return (
     <View style={styles.container}>
-      {transactions.length > 0 && data && (
+      {data && (
         <PieChart
           data={data}
           accessor={"amount"}

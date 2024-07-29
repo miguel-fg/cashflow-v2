@@ -6,9 +6,9 @@ import { View, StyleSheet, Dimensions } from "react-native";
 import { balanceDataBuilder } from "../../scripts/chartDataBuilder";
 
 const BalanceChart = () => {
-  const { transactions } = useContext(TransactionContext);
+  const { transactions, loading } = useContext(TransactionContext);
   const { selectedAccount } = useContext(AccountContext);
-  const [data, setData] = useState({});
+  const [data, setData] = useState(null);
   const screenWidth = Dimensions.get("window").width;
 
   const chartConfig = {
@@ -30,14 +30,14 @@ const BalanceChart = () => {
   };
 
   useEffect(() => {
-    if (transactions.length > 0 && selectedAccount) {
+    if (!loading && transactions && selectedAccount) {
       setData(balanceDataBuilder(transactions, selectedAccount.amount));
     }
   }, [transactions, selectedAccount]);
 
   return (
     <View style={styles.container}>
-      {data.datasets && (
+      {data && (
         <LineChart
           data={data}
           width={screenWidth - 5}
