@@ -133,6 +133,7 @@ const deleteAccount = async (accountId) => {
     await db.runAsync("DELETE FROM transactions WHERE account_id = ?", [
       accountId,
     ]);
+    await db.runAsync("DELETE FROM budgets WHERE account_id = ?", [accountId]);
 
     await db.runAsync("DELETE FROM accounts WHERE id = ?", [accountId]);
   } catch (error) {

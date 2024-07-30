@@ -13,6 +13,7 @@ import AddTransaction from "./addTransaction";
 import TextButton from "../shared/textButton";
 import { TransactionContext } from "../../context/transactionContext";
 import { AccountContext } from "../../context/accountsContext";
+import { BudgetContext } from "../../context/budgetContext";
 
 const getIconSource = (category) => {
   switch (category) {
@@ -89,6 +90,7 @@ const TransactionCard = (props) => {
   const [editingVisible, setEditingVisible] = useState(false);
   const { removeTransaction } = useContext(TransactionContext);
   const { selectedAccount, updateTotalsOnDelete } = useContext(AccountContext);
+  const { revertBudgetOnTransactionDelete } = useContext(BudgetContext);
   const iconSource = getIconSource(props.category);
   const amountColor = props.type === "Income" ? "#62A87C" : "#FE616F";
   const formattedAmount = formatAmount(props.amount, props.type);
@@ -132,6 +134,11 @@ const TransactionCard = (props) => {
             await removeTransaction(currentTransaction.id);
             await updateTotalsOnDelete(
               selectedAccount.id,
+              currentTransaction.amount,
+              currentTransaction.type,
+            );
+            await revertBudgetOnTransactionDelete(
+              currentTransaction.category,
               currentTransaction.amount,
               currentTransaction.type,
             );

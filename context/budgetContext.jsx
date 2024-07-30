@@ -5,8 +5,11 @@ import {
   addBudget,
   editBudget,
   deleteBudget,
+  getBudgetsByCategory,
+  updateBudgetCurrentAmount,
 } from "../db/budgetService";
 import { AccountContext } from "./accountsContext";
+import { Alert } from "react-native";
 
 export const BudgetContext = createContext();
 
@@ -57,6 +60,84 @@ export const BudgetProvider = ({ children }) => {
     }
   };
 
+  const updateBudgetOnTransaction = async (
+    category,
+    amount,
+    type,
+    isEdit = false,
+    previousAmount = 0,
+    previousType = "Expense",
+  ) => {
+    setLoading(true);
+    try {
+      const budgets = await getBudgetsByCategory(category);
+
+      for (const budget of budgets) {
+        let newAmount = budget.current_amount;
+
+        if (isEdit) {
+          if (previousType === "Income") {
+            newAmount += previousAmount;
+          } else {
+            newAmount -= previousAmount;
+          }
+        }
+
+        if (type === "Income") {
+          newAmount -= amount;
+        } else {
+          newAmount += amount;
+        }
+
+        if (newAmount >= budget.limit_amount) {
+          Alert.alert(
+            "Budget Alert",
+            `You have reached your budget limit for ${category}`,
+          );
+        }
+
+        await updateBudgetCurrentAmount(budget.id, newAmount);
+      }
+
+      fetchBudgets();
+    } catch (error) {
+      console.error(
+        "[Provider] Failed to update budgets on transaction. ERR: ",
+        error,
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const revertBudgetOnTransactionDelete = async (category, amount, type) => {
+    setLoading(true);
+    try {
+      const budgets = await getBudgetsByCategory(category);
+
+      for (const budget of budgets) {
+        let newAmount = budget.current_amount;
+
+        if (type === "Income") {
+          newAmount += amount;
+        } else {
+          newAmount -= amount;
+        }
+
+        await updateBudgetCurrentAmount(budget.id, newAmount);
+      }
+
+      fetchBudgets();
+    } catch (error) {
+      console.error(
+        "[Provider] Failed to revert budget on transaction delete. ERR: ",
+        error,
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const removeBudget = async (budgetId) => {
     setLoading(true);
     try {
@@ -83,6 +164,8 @@ export const BudgetProvider = ({ children }) => {
         fetchBudgets,
         addNewBudget,
         editExistingBudget,
+        updateBudgetOnTransaction,
+        revertBudgetOnTransactionDelete,
         removeBudget,
       }}
     >
