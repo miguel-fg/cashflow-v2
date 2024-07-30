@@ -13,15 +13,7 @@ import CategoryChart from "../../components/budgets/categoryChart";
 import AddNewCard from "../../components/shared/addNewCard";
 import { BudgetContext } from "../../context/budgetContext";
 import BudgetList from "../../components/budgets/BudgetList";
-
-const data = [
-  {
-    id: 1,
-    category: "entertainment",
-    current_amount: 22.5,
-    limit_amount: 75.0,
-  },
-];
+import AddBudget from "../../components/budgets/addBudget";
 
 const Budgets = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -47,6 +39,11 @@ const Budgets = () => {
 
   return (
     <>
+      <AddBudget
+        isEditing={false}
+        isVisible={isModalVisible}
+        onClose={closeModal}
+      />
       <StatusBar style="light" translucent={true} />
       <SafeAreaView style={styles.container}>
         <HomeAppBar>
@@ -63,7 +60,7 @@ const Budgets = () => {
             <StyledText type="title">Your Budgets</StyledText>
           </View>
           <AddNewCard onPress={handleAddNew} toAdd="Budget" />
-          <BudgetList budgets={data} />
+          <BudgetList budgets={budgets} />
         </View>
       </SafeAreaView>
     </>

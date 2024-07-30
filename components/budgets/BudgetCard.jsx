@@ -8,8 +8,9 @@ import {
   Modal,
 } from "react-native";
 import StyledText from "../shared/styledText";
+import TextButton from "../shared/textButton";
 import { BudgetContext } from "../../context/budgetContext";
-import { AccountContext } from "../../context/accountsContext";
+import AddBudget from "./addBudget.jsx";
 
 const getIconSource = (category) => {
   switch (category) {
@@ -70,7 +71,6 @@ const BudgetCard = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [editingVisible, setEditingVisible] = useState(false);
   const { removeBudget } = useContext(BudgetContext);
-  const { selectedAccount } = useContext(AccountContext);
   const iconSource = getIconSource(props.category);
   const formattedCurrent = formatAmount(props.currentAmount);
   const formattedLimit = formatAmount(props.limitAmount);
@@ -131,6 +131,12 @@ const BudgetCard = (props) => {
 
   return (
     <TouchableOpacity onLongPress={handlePressAndHold} activeOpacity={0.5}>
+      <AddBudget
+        isEditing={true}
+        toEditBudget={currentBudget}
+        isVisible={editingVisible}
+        onClose={closeEdit}
+      />
       <View style={styles.container}>
         <View style={styles.iconContainer}>
           <Image source={iconSource} style={styles.icon} />
@@ -160,6 +166,50 @@ const BudgetCard = (props) => {
           </View>
         </View>
       </View>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <View style={styles.budgetInfo}>
+              <StyledText type="title" weight="medium">
+                {capitalizeWords(props.category)}
+              </StyledText>
+              <View style={styles.spacer}></View>
+              <StyledText type="text">Limit: {formattedLimit}</StyledText>
+              <StyledText type="text">Current: {formattedCurrent}</StyledText>
+            </View>
+            <View style={styles.mainButtons}>
+              <TextButton
+                variant="success"
+                onPress={handleEdit}
+                style={styles.buttonSize}
+              >
+                EDIT
+              </TextButton>
+              <TextButton
+                variant="danger"
+                onPress={handleDelete}
+                style={styles.buttonSize}
+              >
+                DELETE
+              </TextButton>
+            </View>
+            <TextButton
+              variant="primary"
+              onPress={() => setModalVisible(!modalVisible)}
+              style={styles.cancelButton}
+            >
+              CANCEL
+            </TextButton>
+          </View>
+        </View>
+      </Modal>
     </TouchableOpacity>
   );
 };
@@ -211,6 +261,47 @@ const styles = StyleSheet.create({
   barFill: {
     height: "100%",
     borderRadius: 5,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "#C2CED7",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  buttonSize: {
+    width: 100,
+  },
+  cancelButton: {
+    marginTop: 50,
+    width: 205,
+  },
+  mainButtons: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 5,
+  },
+  budgetInfo: {
+    marginBottom: 20,
+    width: 205,
+  },
+  spacer: {
+    width: "100%",
+    height: 10,
   },
 });
 

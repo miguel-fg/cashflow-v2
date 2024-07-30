@@ -36,7 +36,7 @@ export const BudgetProvider = ({ children }) => {
         const { id } = await addBudget(budget, selectedAccount.id);
         const newBudget = await getSingleBudget(id);
 
-        setBudgets((prevBudgets) => [...prevBudgets, newBudget]);
+        setBudgets((prevBudgets) => [newBudget, ...prevBudgets]);
       } catch (error) {
         console.error("[Provider] Failed to add budget. ERR: ", error);
       } finally {
@@ -49,9 +49,7 @@ export const BudgetProvider = ({ children }) => {
     setLoading(true);
     try {
       await editBudget(budget);
-      setBudgets((prevBudgets) => {
-        prevBudgets.map((b) => (b.id === budget.id ? { ...b, ...budget } : b));
-      });
+      fetchBudgets();
     } catch (error) {
       console.error("[Provider] Failed to edit budget. ERR: ", error);
     } finally {
