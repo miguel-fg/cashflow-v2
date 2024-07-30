@@ -1,14 +1,12 @@
-import React, { useContext, useState, useEffect } from "react";
-import { LineChart } from "react-native-chart-kit";
+import React, { useContext, useEffect, useState } from "react";
+import { PieChart } from "react-native-chart-kit";
 import { TransactionContext } from "../../context/transactionContext";
-import { AccountContext } from "../../context/accountsContext";
 import { View, StyleSheet, Dimensions } from "react-native";
-import { balanceDataBuilder } from "../../scripts/chartDataBuilder";
+import { categoryDataBuilder } from "../../scripts/chartDataBuilder";
 
-const BalanceChart = () => {
+const CategoryChart = () => {
+  const [data, setData] = useState([]);
   const { transactions, loading } = useContext(TransactionContext);
-  const { selectedAccount } = useContext(AccountContext);
-  const [data, setData] = useState(null);
   const screenWidth = Dimensions.get("window").width;
 
   const chartConfig = {
@@ -20,33 +18,22 @@ const BalanceChart = () => {
     labelColor: (opacity = 1) => `rgba(8, 14, 33, ${opacity})`,
   };
 
-  const formatYLabel = (value) => {
-    const num = Number(value);
-    if (num >= 1000) {
-      return (num / 1000).toFixed(2) + "k";
-    }
-
-    return num.toFixed(1).toString();
-  };
-
   useEffect(() => {
-    if (!loading && transactions && selectedAccount) {
-      setData(balanceDataBuilder(transactions, selectedAccount.amount));
+    if (!loading) {
+      setData(categoryDataBuilder(transactions));
     }
-  }, [transactions, selectedAccount]);
+  }, [transactions]);
 
   return (
     <View style={styles.container}>
       {data && (
-        <LineChart
+        <PieChart
           data={data}
+          accessor={"amount"}
+          backgroundColor={"transparent"}
           width={screenWidth - 5}
           height={170}
           chartConfig={chartConfig}
-          bezier
-          withHorizontalLines={true}
-          withVerticalLines={false}
-          formatYLabel={formatYLabel}
         />
       )}
     </View>
@@ -61,4 +48,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default BalanceChart;
+export default CategoryChart;

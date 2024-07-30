@@ -5,6 +5,10 @@ const formatDate = (dateString) => {
   return date.toLocaleDateString("en-US", options).replace(", ", "-");
 };
 
+const capitalizeWords = (s) => {
+  return s.replace(/\b\w/g, (char) => char.toUpperCase());
+};
+
 const balanceDataBuilder = (transactions, currAmount) => {
   const labels = [""];
   const data = [currAmount];
@@ -38,4 +42,44 @@ const balanceDataBuilder = (transactions, currAmount) => {
   };
 };
 
-export { balanceDataBuilder };
+const categoryDataBuilder = (transactions) => {
+  const categoryMap = new Map();
+
+  transactions.forEach((transaction) => {
+    if (transaction.type === "Expense") {
+      const { category, amount } = transaction;
+      if (categoryMap.has(category)) {
+        categoryMap.set(category, categoryMap.get(category) + amount);
+      } else {
+        categoryMap.set(category, amount);
+      }
+    }
+  });
+
+  const data = [];
+  const colors = [
+    "#416788",
+    "#F46036",
+    "#62A87C",
+    "#FF82A9",
+    "#FFB100",
+    "#FE616F",
+    "#88CCF1",
+  ];
+  let colorIndex = 0;
+
+  categoryMap.forEach((amount, category) => {
+    data.push({
+      name: capitalizeWords(category),
+      amount: amount,
+      color: colors[colorIndex % colors.length],
+      legendFontColor: "#080E21",
+    });
+
+    colorIndex++;
+  });
+
+  return data;
+};
+
+export { balanceDataBuilder, categoryDataBuilder };

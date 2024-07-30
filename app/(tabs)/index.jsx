@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useContext } from "react";
 import {
   ActivityIndicator,
   SafeAreaView,
@@ -17,8 +17,7 @@ import AddNewCard from "../../components/shared/addNewCard";
 
 const Index = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { transactions, loading, fetchTransactions } =
-    useContext(TransactionContext);
+  const { transactions, loading } = useContext(TransactionContext);
 
   const handleAddNew = () => {
     setIsModalVisible(true);
@@ -27,10 +26,6 @@ const Index = () => {
   const closeModal = () => {
     setIsModalVisible(false);
   };
-
-  useEffect(() => {
-    fetchTransactions();
-  }, []);
 
   if (loading) {
     return (
