@@ -260,7 +260,7 @@ export const AccountProvider = ({ children }) => {
       );
 
       if (selectedAccount.id === accountId) {
-        if (accounts.length > 0) {
+        if (accounts.length > 0 && accounts[0].id != accountId) {
           setSelectedAccount(accounts[0]);
         } else {
           setSelectedAccount({});

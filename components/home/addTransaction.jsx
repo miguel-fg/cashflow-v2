@@ -7,6 +7,7 @@ import TextButton from "../shared/textButton";
 import TypeRadioGroup from "./typeRadioGroup";
 import { AccountContext } from "../../context/accountsContext";
 import { TransactionContext } from "../../context/transactionContext";
+import { BudgetContext } from "../../context/budgetContext";
 
 const AddTransaction = (props) => {
   const { isEditing, toEditTransaction, isVisible, onClose } = props;
@@ -14,6 +15,7 @@ const AddTransaction = (props) => {
     useContext(AccountContext);
   const { addNewTransaction, editExistingTransaction } =
     useContext(TransactionContext);
+  const { updateBudgetOnTransaction } = useContext(BudgetContext);
   const [attempted, setAttempted] = useState(false);
   const [name, setName] = useState("");
   const [category, setCategory] = useState("misc");
@@ -175,6 +177,8 @@ const AddTransaction = (props) => {
             rawAmount,
             selectedType,
           );
+
+          await updateBudgetOnTransaction(category, rawAmount, selectedType);
         } else {
           transaction = {
             id: toEditTransaction.id,
@@ -192,6 +196,15 @@ const AddTransaction = (props) => {
             toEditTransaction.type,
             rawAmount,
             selectedType,
+          );
+
+          await updateBudgetOnTransaction(
+            category,
+            rawAmount,
+            selectedType,
+            true,
+            toEditTransaction.amount,
+            toEditTransaction.type,
           );
         }
         setName("");

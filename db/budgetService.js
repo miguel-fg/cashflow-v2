@@ -15,6 +15,21 @@ const getBudgets = async (accountId) => {
   }
 };
 
+const getBudgetsByCategory = async (category) => {
+  try {
+    const db = await initDB();
+    const result = await db.getAllAsync(
+      "SELECT * FROM budgets WHERE category = ?",
+      [category],
+    );
+
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to fetch budgets. ERR: ", error);
+    throw error;
+  }
+};
+
 const getSingleBudget = async (budgetId) => {
   try {
     const db = await initDB();
@@ -62,6 +77,22 @@ const editBudget = async (budget) => {
   }
 };
 
+const updateBudgetCurrentAmount = async (budgetId, newAmount) => {
+  try {
+    const db = await initDB();
+    if (newAmount < 0) {
+      newAmount = 0;
+    }
+    await db.runAsync("UPDATE budgets SET current_amount = ? WHERE id = ?", [
+      newAmount,
+      budgetId,
+    ]);
+  } catch (error) {
+    console.error("[Database] Failed to update budget amount. ERR: ", error);
+    throw error;
+  }
+};
+
 const deleteBudget = async (budgetId) => {
   try {
     const db = await initDB();
@@ -72,4 +103,12 @@ const deleteBudget = async (budgetId) => {
   }
 };
 
-export { getBudgets, getSingleBudget, addBudget, editBudget, deleteBudget };
+export {
+  getBudgets,
+  getSingleBudget,
+  getBudgetsByCategory,
+  addBudget,
+  editBudget,
+  updateBudgetCurrentAmount,
+  deleteBudget,
+};
