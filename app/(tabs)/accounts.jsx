@@ -48,7 +48,7 @@ const Accounts = () => {
       />
       <StatusBar style="light" translucent={true} />
       <SafeAreaView style={styles.container}>
-        <HomeAppBar>
+        <HomeAppBar height={110}>
           <View style={styles.appBarContainer}>
             <StyledText type="header" variant="light">
               Accounts
@@ -94,8 +94,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#EEF0F2",
   },
   appBarContainer: {
-    paddingTop: 40,
     alignItems: "center",
+    marginTop: 20,
   },
   titleContainer: {
     alignItems: "center",
