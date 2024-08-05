@@ -58,7 +58,7 @@ const Settings = () => {
     <>
       <StatusBar style="light" translucent={true} />
       <SafeAreaView style={styles.container}>
-        <HomeAppBar>
+        <HomeAppBar height={110}>
           <View style={styles.appBarContainer}>
             <StyledText type="header" variant="light">
               Settings
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#EEF0F2",
   },
   appBarContainer: {
-    paddingTop: 40,
+    paddingTop: 20,
     alignItems: "center",
   },
   titleContainer: {
