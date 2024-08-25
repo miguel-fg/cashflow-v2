@@ -1,20 +1,20 @@
-import React, { useContext, useState, useEffect } from "react";
-import { LineChart } from "react-native-chart-kit";
-import { TransactionContext } from "../../context/transactionContext";
-import { AccountContext } from "../../context/accountsContext";
-import { View, StyleSheet, Dimensions } from "react-native";
-import { balanceDataBuilder } from "../../scripts/chartDataBuilder";
+import React, { useContext, useState, useEffect } from 'react';
+import { LineChart } from 'react-native-chart-kit';
+import { TransactionContext } from '../../context/transactionContext';
+import { AccountContext } from '../../context/accountsContext';
+import { View, StyleSheet, Dimensions } from 'react-native';
+import { balanceDataBuilder } from '../../scripts/chartDataBuilder';
 
 const BalanceChart = () => {
   const { transactions, loading } = useContext(TransactionContext);
   const { selectedAccount } = useContext(AccountContext);
   const [data, setData] = useState(null);
-  const screenWidth = Dimensions.get("window").width;
+  const screenWidth = Dimensions.get('window').width;
 
   const chartConfig = {
-    backgroundGradientFrom: "#EEF0F2",
+    backgroundGradientFrom: '#EEF0F2',
     backgroundGradientFromOpacity: 1,
-    backgroundGradientTo: "#EEF0F2",
+    backgroundGradientTo: '#EEF0F2',
     backgroundGradientToOpacity: 1,
     color: (opacity = 1) => `rgba(65, 103, 136, ${opacity})`,
     labelColor: (opacity = 1) => `rgba(8, 14, 33, ${opacity})`,
@@ -23,7 +23,7 @@ const BalanceChart = () => {
   const formatYLabel = (value) => {
     const num = Number(value);
     if (num >= 1000) {
-      return (num / 1000).toFixed(2) + "k";
+      return (num / 1000).toFixed(2) + 'k';
     }
 
     return num.toFixed(1).toString();
@@ -56,8 +56,8 @@ const BalanceChart = () => {
 const styles = StyleSheet.create({
   container: {
     flex: -1,
-    width: "100%",
-    alignItems: "center",
+    width: '100%',
+    alignItems: 'center',
   },
 });
 
