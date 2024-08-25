@@ -1,6 +1,13 @@
-const formatDate = (dateString) => {
+const formatDateLong = (dateString) => {
   const date = new Date(dateString);
   const options = { month: "short", day: "2-digit" };
+
+  return date.toLocaleDateString("en-US", options).replace(", ", "-");
+};
+
+const formatDateShort = (dateString) => {
+  const date = new Date(dateString);
+  const options = { month: "numeric", day: "2-digit" };
 
   return date.toLocaleDateString("en-US", options).replace(", ", "-");
 };
@@ -10,17 +17,30 @@ const capitalizeWords = (s) => {
 };
 
 const balanceDataBuilder = (transactions, currAmount) => {
+  
+  let recentTransactions = transactions;
+
+  if(transactions.length > 8){
+    recentTransactions = transactions.slice(0, 8);
+  }
+
   const labels = [""];
   const data = [currAmount];
 
   let runningTotal = currAmount;
-  const reversedTransactions = [...transactions].reverse();
+  const reversedTransactions = [...recentTransactions].reverse();
 
-  reversedTransactions.forEach((transaction) => {
-    labels.push(formatDate(transaction.date));
-  });
+  if(reversedTransactions.length > 5){
+    reversedTransactions.forEach((transaction) => {
+      labels.push(formatDateShort(transaction.date));
+    });
+  } else {
+    reversedTransactions.forEach((transaction) => {
+      labels.push(formatDateLong(transaction.date));
+    });
+  }
 
-  transactions.forEach((transaction) => {
+  recentTransactions.forEach((transaction) => {
     if (transaction.type === "Income") {
       runningTotal -= transaction.amount;
     } else {
