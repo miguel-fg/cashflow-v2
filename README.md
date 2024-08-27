@@ -1,50 +1,77 @@
-# Welcome to your Expo app 👋
+# Cash Flow
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Cash Flow is a mobile application designed to help users manage their finances by tracking income, expenses, and budgets. This is the second iteration of Cash Flow, now built with React Native and Expo, running on a local SQLite database. The app provides an intuitive and convenient way to log transactions, monitor account balances, and set spending limits directly from your mobile device.
 
-## Get started
 
-1. Install dependencies
+## Features
 
-   ```bash
-   npm install
-   ```
+- **Authentication**: Secure local user authentication with hashed and salted passwords.
+- **Account Management**: Add and manage multiple accounts, with balance, income, and expense tracking.
+- **Transaction Tracking**: Log income and expenses with ease, view transaction history, and monitor balance changes over time with a dynamic graph.
+- **Budget Management**: Set spending limits for categories, visualize spending distribution with a pie chart, and receive alerts when budget limits are reached or exceeded.
+- **Data Visualization**: Balance and category spending charts to help users understand their financial habits.
 
-2. Start the app
 
-   ```bash
-    npx expo start
-   ```
+## Run Locally
 
-In the output, you'll find options to open the app in a
+### Dependencies
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- Node.js (LTS)
+- Android Device with [Expo Go App](https://play.google.com/store/apps/details?id=host.exp.exponent&referrer=docs) installed.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+### Server setup
 
 ```bash
-npm run reset-project
+  git clone https://github.com/miguel-fg/cashflow-v2
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Go to the project directory
 
-## Learn more
+```bash
+  cd my-project
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+Install dependencies
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```bash
+  npm install
+```
 
-## Join the community
+Start the server
 
-Join our community of developers creating universal apps.
+```bash
+  npx expo start -c
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Open the Expo Go App and scan the QR code shown in the terminal to  use the application.
+
+
+## Usage
+
+- **Authentication**: Start by creating an account or logging in with existing credentials. 
+- **Account Setup**: Add your financial accounts in the `Accounts` tab.
+- **Home Page**: View your account balance, total expenses, and total income. Use the dropdown to switch between accounts. Add transactions to the selected account from this page.
+- **Budgets**: View your top 5 spending categories, set budget limits for different categories and track their progress with visual indicators.
+## Motivation
+
+The motivation behind Cash Flow was to create a budgeting tool that meets my personal financial management needs. Most budgeting apps either lack essential features or come with a hefty price tag. I wanted an app that allows me to set budgets, track spending by category, and manage multiple accounts.
+## Lessons Learned
+
+This was my first time working with React Native, and transitioning from a web environment presented several challenges. Mobile development requires consideration of additional elements like notifications, navigation, and platform-specific behavior. Big big big thanks to [Expo](https://expo.dev) for making the experience much more familiar. 
+
+I was only able to test the app on Android devices and emulators, so I cannot confirm that it works as expected on iOS.
+
+
+## Acknowledgements
+
+This project would not be possible without 
+
+ - [Icons8 Icons](https://icons8.com)
+ - [React Native Chart Kit](https://github.com/indiespirit/react-native-chart-kit)
+ - [unDraw Illustrations](https://undraw.co)
+ - [Expo](https://expo.dev)
+
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)
