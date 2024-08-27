@@ -17,7 +17,7 @@ Cash Flow is a mobile application designed to help users manage their finances b
 ### Dependencies
 
 - Node.js (LTS)
-- Android Device with [Expo Go App](https://play.google.com/store/apps/details?id=host.exp.exponent&referrer=docs) installed.
+- Device with [Expo Go App](https://expo.dev/go) installed (Android OS preferred).
 
 ### Server setup
 
@@ -45,6 +45,10 @@ Start the server
 
 Open the Expo Go App and scan the QR code shown in the terminal to  use the application.
 
+## Installation on Android Device
+An .apk file for Cash Flow will be available soon for direct download. This will allow you to install and use the app on your Android device without going through the Play Store or Expo Go.
+
+The app will eventually be published to the Google Play Store once it has been thoroughly tested and I'm satisfied with its performance for the general public. Stay tuned for updates!
 
 ## Usage
 
@@ -57,9 +61,9 @@ Open the Expo Go App and scan the QR code shown in the terminal to  use the appl
 The motivation behind Cash Flow was to create a budgeting tool that meets my personal financial management needs. Most budgeting apps either lack essential features or come with a hefty price tag. I wanted an app that allows me to set budgets, track spending by category, and manage multiple accounts.
 ## Lessons Learned
 
-This was my first time working with React Native, and transitioning from a web environment presented several challenges. Mobile development requires consideration of additional elements like notifications, navigation, and platform-specific behavior. Big big big thanks to [Expo](https://expo.dev) for making the experience much more familiar. 
+This was my first time working with React Native, and transitioning from a web environment presented several challenges. Mainly ensuring cross-device compatibility, but also consideration of additional elements like notifications, navigation, and platform-specific behavior. Big big BIG thanks to [Expo](https://expo.dev) for making the experience much more familiar. 
 
-I was only able to test the app on Android devices and emulators, so I cannot confirm that it works as expected on iOS.
+**Disclaimer**: I was only able to test the app on Android devices and emulators, so I cannot confirm that it works as expected on iOS.
 
 
 ## Acknowledgements
@@ -74,4 +78,4 @@ This project would not be possible without
 
 ## License
 
-[MIT](https://choosealicense.com/licenses/mit/)
+[GNU GPLv3](https://choosealicense.com/licenses/gpl-3.0/)
